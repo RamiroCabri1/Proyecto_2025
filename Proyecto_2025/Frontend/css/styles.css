@@ -1,0 +1,33 @@
+/* CSS BASICO */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Type shi */
+body {
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  background-color: #fff;
+  color: #000;
+}
+
+/* links */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Imagenes */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Listas */
+ul, ol {
+  list-style: none;
+}
