@@ -2,7 +2,13 @@
 from dataclasses import dataclass
 
 from pywin32_testutil import non_admin_error_codes
+import uuid
 
+"""
+el id en todas las clases deberia ser como opcional aqui en la creacion, luego con la bd se generara un idea al caso,
+se deben inicializar como none.
+
+"""
 
 class Usuario:
     def __init__(self,  email, password, id=None):
@@ -164,7 +170,91 @@ class Profesional(Usuario):
         self.turno = turno
 
 class Paciente:
-    pass
+    """
+    No creo que el paciente deba heredar de la clase usuario.
+    No deberia tener password.
+
+    """
+    def __init__(self,id,nombre,apellido,celular,email,obra_social,):
+        self.id = id
+        self.nombre = nombre
+        self.apellido = apellido
+        self.celular = celular
+        self.email = email
+        self.obra_social = obra_social
+        self.turno = []
+
+    # getter
+
+    def getId(self):
+        return self.id
+    def getNombre(self):
+        return self.nombre
+    def getApellido(self):
+        return self.apellido
+    def getCelular(self):
+        return self.celular
+    def getemail(self):
+        return self.celular
+    def getEmail(self):
+        return self.celular
+    def getObra_social(self):
+        return self.obra_social
+    def getTurno(self):
+        return self.turno
+
+    def __repr__(self):
+        return (f"Nombre y apellido del paciente: {self.nombre}-{self.apellido}, "
+                f"celular: {self.celular}, email: {self.celular}, email: {self.email},"
+                f"obra social: {self.obra_social}, turnos asignado {self.turno} ")
+
+    def setTurno(self,turno):
+        self.turno.append(turno)
+
+    """
+    la idea seria crear una funcion que cree un objeto turno, lo asigne al listados de turnos del medico
+    e ingrese al listado de turnos del paciente.
+    La clase turno esta creada y tiene funciones y validaciones que ayudan en este punto.
+    """
+
+    def solicitar_turno(self,id, profesional: Profesional, dia_str: str, hora_int_tupla: tuple[int, int],
+                        especialidad_requerida: 'Especialidad'):
+        """
+        Crea, valida y registra un nuevo turno, asegurando que el paciente
+        no tenga ya un turno asignado para la misma fecha y hora.
+        """
+
+
+
+        dia_a_chequear = dia_str.lower()
+
+        # Recorrer el historial para ver si ya hay un turno para ese día y hora. La clave estara
+        # ( y sera importante que el profesional lo haga ) en si el turno esta True o False.
+        for turno_existente in self.getTurno():
+
+
+            if (turno_existente.dia_turno == dia_a_chequear and
+                    turno_existente.hora_turno == hora_int_tupla and
+                    turno_existente.activo is True):
+
+                raise ValueError(
+                    f"Ya tienes un turno asignado el {dia_str} a las {hora_int_tupla[0]:02d}:{hora_int_tupla[1]:02d}.")
+
+
+        nuevo_turno = Turno(id=None, paciente=self, profesional=profesional)
+
+
+        mensaje = nuevo_turno.setTurno(dia_str, hora_int_tupla, especialidad_requerida)
+
+        self.setTurno(nuevo_turno)
+
+        return nuevo_turno, mensaje
+
+    def cancelarTurbo(self, id):
+
+        for i in self.getTurno():
+            print(i)
+
 
 from typing import Optional, Tuple
 from datetime import datetime
@@ -231,6 +321,11 @@ class Turno:
 
         self.profesional.turnos.append(self)
         return f"Turno asignado con éxito: {dia} a las {horas:02d}:{minutos:02d}."
+
+
+
+
+
 
 
 
