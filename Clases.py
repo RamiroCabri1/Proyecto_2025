@@ -1,8 +1,8 @@
-
+from typing import List, Dict, Tuple, Optional
 from dataclasses import dataclass
 
-from pywin32_testutil import non_admin_error_codes
-import uuid
+
+
 
 """
 el id en todas las clases deberia ser como opcional aqui en la creacion, luego con la bd se generara un idea al caso,
@@ -11,102 +11,148 @@ se deben inicializar como none.
 """
 
 class Usuario:
-    def __init__(self,  email, password, id=None):
+    def __init__(self,  email: str, password: str, id=None):
         self.id = id
-        self.email = email
-        self.password=password
+        self._email = self._validar_email(email)
+        self._password=self._validar_password(password)
 
     def __repr__(self):
-        return f"Usuario(id={self.id}, email='{self.email}')"
+        return f"Usuario(id={self.id}, email='{self._email}')"
 
-    """
-    faltan metodos que no se como crearlos
-    reemplazar por decoradores
-    faltan validadores
-    """
-   # setter
+    # funciones para validar mail y password, se deberian mejorar
 
-    """
-    agregar validadores
-    
-    """
-
-    def setModificar_email(self, email):
-        self.email = email
-    def setModificar_password(self, password):
-        self.password = password
+    def _validar_email(self, email: str) -> str:
+        if not isinstance(email, str):
+            raise ValueError("El email debe ser una cadena")
+        email = email.strip()
+        if not email:
+            raise ValueError("El email no puede estar vacío.")
+        # Aquí se podría añadir una validación de formato más robusta (regex)
+        return email
 
 
-    # getter
+    def _validar_password(self, password: str) -> str:
+        """Valida que el password no esté vacío y tenga una longitud mínima. Se me ocurrio 6 caracteres
+        minimo, pero a reveer
+        """
 
-    def getEmail(self):
-        return self.email
+        if not password or len(password) < 6:
+            raise ValueError("La contraseña debe tener al menos 6 caracteres.")
 
-    def getPassword(self):
-        return self.password
+        return password
 
+    @property
+    def email(self) -> str:
+        return self._email
+
+    @email.setter
+    def email(self, nuevo_email: str):
+
+        self._email = self._validar_email(nuevo_email)
+
+    @property
+    def password(self):
+        return self._password
+
+    @password.setter
+    def password(self, nueva_password: str):
+
+        self._password = self._validar_password(nueva_password)
+
+# esta clase se creo probando @dataclass
 @dataclass
 class Especialidad:
     id: int
-    nombre: str
+    _nombre: str = ""
     descripcion: str = ""
+
+    @property
+    def nombre(self:str)-> str:
+        return self._nombre
+
 
 
 #Clase Profesional
 # hereda de usuario password y email.
 class Profesional(Usuario):
-    def __init__(self, email, password, nombre, matricula, id=None):
+    def __init__(self, email: str, password : str, nombre: str, matricula: int, id=None):
         super().__init__(email, password, id)
         #hereda id de usuario
-        self.nombre=nombre
-        self.matricula = matricula
+
+        self._nombre= self._validador_nombre(nombre)
+        self._matricula = self._validador_matricula(matricula)
+
         #las especialidades se crean desde la clase
         self.especialidades = []
         #los turnos vienen por otro lado
-        self.turnos = []
-        self.horarios =  {
-           "lunes": None,
-            "martes":None,
-            "miercoles":None,
+        self._turnos = []
+
+        self._horarios: Dict[str, Optional[Tuple[int, int, int, int]]] = {
+            "lunes": None,
+            "martes": None,
+            "miercoles": None,
             "jueves": None,
             "viernes": None,
-            "sabado":None,
+            "sabado": None,
         }
 
 
 
     def __repr__(self):
-        return (f"Medico(id={self.id}, nombre='{self.nombre}', matricula='{self.matricula}, horarios disponibles"
+        return (f"Medico(id={self.id}, nombre='{self._nombre}', matricula='{self._matricula}, horarios disponibles"
                 f"={self.horarios}', especialidades = {self.especialidades})")
 
-    """
-    reemplazar por decoradores,
-    faltan validadores
-    
-    """
 
-    def getMatricula(self):
-        return self.matricula
+    @property
+    def matricula(self):
+        return self._matricula
 
-    def getEspacialidades(self):
+    @property
+    def espacialidades(self):
         return  self.especialidades
 
-    def getTurno(self):
-        return self.turnos
+    @property
+    def turnos(self):
+        return self._turnos
+    @property
+    def nombre(self):
+        return  self._nombre
 
-    def getNombre(self):
-        return  self.nombre
-
-    def getHorarios(self):
-        return  self.horarios
+    @property
+    def horarios(self):
+        return  self._horarios
 
 
+    @nombre.setter
+    def nombre(self,nombre: str):
+        self._nombre  = self._validador_nombre(nombre)
 
-    def setMatricula(self,matricula):
-        self.matricula = matricula
+    @matricula.setter
+    def matricula(self, matricula: int):
+        self._matricula = self._validador_matricula(matricula)
 
-    def setNombre(self,nombre):
-        self.nombre = nombre
+
+
+
+    # Validador nombre y matricula
+
+    def _validador_nombre(self,nombre: str) -> str:
+        nombre = nombre.strip()
+        if not nombre:
+            raise ValueError("El nombre del profesional no puede estar vacío.")
+        return nombre
+
+    def _validador_matricula(self,matricula: int) -> int:
+
+       if not isinstance(matricula,int):
+           raise ValueError("La matricula debe ser un numero entero mayor a 0")
+
+
+
+       if matricula <= 0:
+            raise ValueError("La matricula debe ser un numero mayor a  0.")
+       return matricula
+
 
     def setEspecialidades(self, especialidad):
 
@@ -218,7 +264,7 @@ class Paciente:
     """
 
     def solicitar_turno(self,id, profesional: Profesional, dia_str: str, hora_int_tupla: tuple[int, int],
-                        especialidad_requerida: 'Especialidad'):
+                        especialidad_requerida: Especialidad):
         """
         Crea, valida y registra un nuevo turno, asegurando que el paciente
         no tenga ya un turno asignado para la misma fecha y hora.
@@ -289,39 +335,48 @@ class Turno:
         return self.hora_turno
 
     def setTurno(self,dia,horario: Tuple[int, int],especialidad:Especialidad):
-
+        errores = []
         dia =dia.lower()
         horas, minutos = horario
 
+        # Aca se evalua la especialidad
         if especialidad not in self.profesional.especialidades:
-            raise ValueError(f"El profecional no brinda esa especialidad")
+            errores.append(f"El profesional no brinda la especialidad '{especialidad.nombre}'.")
 
         horario_profesional = self.profesional.horarios.get(dia)
 
+        # Aca evaluo si el dia tiene el horario asignado
         if not horario_profesional or horario_profesional is None:
-            raise ValueError(f"El profesional no tiene horarios configurados para el día '{dia}'.")
-
-        hora_inicio, minuto_inicio, hora_fin, minuto_fin = horario_profesional
-
-        # 3. Validación de Rango Horario
-        minutos_turno = horas * 60 + minutos
-        minutos_inicio_disp = hora_inicio * 60 + minuto_inicio
-        minutos_fin_disp = hora_fin * 60 + minuto_fin
-
-        if not (minutos_inicio_disp <= minutos_turno and minutos_turno < minutos_fin_disp):
-            hora_inicio_str = f"{hora_inicio:02d}:{minuto_inicio:02d}"
-            hora_fin_str = f"{hora_fin:02d}:{minuto_fin:02d}"
-
-            raise ValueError(
-                f"Hora de turno ({dia} a las {horas:02d}:{minutos:02d}) fuera de la disponibilidad ({hora_inicio_str} - {hora_fin_str}).")
+            errores.append(f"El profesional no tiene horarios configurados para el día '{dia}'.")
+        else:
 
 
-        self.dia_turno = dia
-        self.hora_turno = horario
+            # Aca chequeamos la hora
+            hora_inicio, minuto_inicio, hora_fin, minuto_fin = horario_profesional
 
-        self.profesional.turnos.append(self)
-        return f"Turno asignado con éxito: {dia} a las {horas:02d}:{minutos:02d}."
+            # 3. Validación de Rango Horario
 
+            minutos_turno = horas * 60 + minutos
+            minutos_inicio_disp = hora_inicio * 60 + minuto_inicio
+            minutos_fin_disp = hora_fin * 60 + minuto_fin
+
+            if not (minutos_inicio_disp <= minutos_turno and minutos_turno < minutos_fin_disp):
+                hora_inicio_str = f"{hora_inicio:02d}:{minuto_inicio:02d}"
+                hora_fin_str = f"{hora_fin:02d}:{minuto_fin:02d}"
+
+                errores.append(
+                    f"Hora de turno ({dia} a las {horas:02d}:{minutos:02d}) fuera de la disponibilidad ({hora_inicio_str} - {hora_fin_str}).")
+
+
+            self.dia_turno = dia
+            self.hora_turno = horario
+
+            self.profesional.turnos.append(self)
+            return f"Turno asignado con éxito: {dia} a las {horas:02d}:{minutos:02d}."
+
+        if errores:
+           # Si tenemos errores aca la lista creada los presenta.
+            raise ValueError("\n".join(errores))
 
 
 

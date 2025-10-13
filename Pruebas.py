@@ -1,15 +1,13 @@
-from Clases import *
+from Clases import Profesional, Especialidad
 
+medico = Profesional("1020","cabriramiro","ramiro",10)
 
+medico.password = "@gmail.com"
+email = medico.password
 
+print(email)
 
-medico = Profesional("email@gmail",123,"pancho",20,1)
-especialidad = Especialidad(1,"podologo","mira los pies")
-cirujano = Especialidad(1,"podologo","mira los pies")
-medico.setEspecialidades(especialidad)
-medico.configurar_dia_horario("martes","08:30 - 20:30")
-paciente = Paciente(1,"rmairo","cabri",230,"cabri@algo","OSDE platinum")
-
-print(paciente.solicitar_turno(1,medico,"martes",(12,30),cirujano))
-print(medico.getTurno())
+especialidad = Especialidad(1,"podologo","mira las patas")
+a_ver = especialidad.nombre
+print(a_ver)
 
