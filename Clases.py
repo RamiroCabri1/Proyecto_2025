@@ -1,4 +1,3 @@
-
 from dataclasses import dataclass
 
 from pywin32_testutil import non_admin_error_codes
@@ -231,8 +230,3 @@ class Turno:
 
         self.profesional.turnos.append(self)
         return f"Turno asignado con éxito: {dia} a las {horas:02d}:{minutos:02d}."
-
-
-
-
-
