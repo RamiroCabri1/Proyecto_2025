@@ -1,4 +1,4 @@
-from typing import List, Dict, Tuple, Optional
+from typing import List, Dict, Tuple, Optional, Any
 from dataclasses import dataclass
 
 
@@ -10,25 +10,109 @@ se deben inicializar como none.
 
 """
 
-class Usuario:
-    def __init__(self,  email: str, password: str, id=None):
+
+
+
+class ValidatorMixin:
+    """Clase Mix-in.
+    Encontre que muchas clases tienen argumentos que son validados de la misma manera,
+    para encapsular codigo, y que sea mas eficiente, esta clase contiene metodos estaticos que luego pueden ser usadas
+    en clases que hereden.
+
+    """
+
+    @staticmethod
+    def _validar_texto_no_vacio(valor: Any, campo: str) -> str:
+        """
+        Valida que el campo sea un string, no esté vacío y limpia los espacios periféricos.
+        Funcion que sera muy utilizada
+        """
+        if not isinstance(valor, str):
+            # Asegura que la entrada sea una cadena antes de intentar usar .strip()
+            raise TypeError(
+                f"El campo '{campo}' debe ser una cadena de texto (str). Se recibió {type(valor).__name__}.")
+
+        valor_limpio = valor.strip()
+        # quita espacios en blanco.
+
+        if not valor_limpio: # chequea que el campo no este vacio
+            raise ValueError(f"El campo '{campo}' no puede estar vacío.")
+
+        return valor_limpio
+
+    @staticmethod
+    def _validar_entero_positivo(valor: Any, campo: str) -> int:
+        """
+        Valida que el valor sea un entero y  mayor que cero.
+        """
+        # Intentamos convertir si es un float o un string de número, pero el requisito es 'int'.
+        if not isinstance(valor, int):
+            raise TypeError(f"El campo '{campo}' debe ser un número entero. Se recibió {type(valor).__name__}.")
+
+        if valor <= 0:
+            raise ValueError(f"El campo '{campo}' debe ser un número entero positivo.")
+
+        return valor
+
+
+
+class Usuario(ValidatorMixin):
+
+    """
+
+    En la clase usuario coloco primero los decoradores  set y get, para luego poder
+    utilizar arroba.setter ( que posee heredado un metodo estatico que valida datos )
+    aso validar y chequear inputs correctos de los datos al momento de instanciar la clase.
+    ValidarPassword es la unica funcion que por el momento queda creada en la clase.
+
+    """
+    @property
+    def email(self) -> str:
+        return self._email
+
+    @email.setter
+    def email(self, nuevo_email: str):
+        self._email = self._validar_texto_no_vacio(nuevo_email, "Email")
+
+    @property
+    def password(self):
+        return self._password
+
+    @password.setter
+    def password(self, nueva_password: str):
+        """
+        Aqui encontramos la unica funcion no heredada
+
+        """
+        self._password = self._validar_password(nueva_password)
+
+    @property
+    def nombre(self)-> str:
+        return self._nombre
+
+    @nombre.setter
+    def nombre(self, nombre:str):
+        self._nombre = self._validar_texto_no_vacio(nombre, "Nombre")
+
+    @property
+    def apellido(self)-> str:
+        return self._apellido
+
+    @apellido.setter
+    def apellido(self, apellido:str):
+        self._apellido = self._validar_texto_no_vacio(apellido, "Apellido")
+
+    def __init__(self,nombre: str,apellido:str,  email: str, password: str, id=None):
         self.id = id
-        self._email = self._validar_email(email)
+        self._email = email
         self._password=self._validar_password(password)
+        self._nombre = nombre
+        self._apellido = apellido
 
     def __repr__(self):
-        return f"Usuario(id={self.id}, email='{self._email}')"
+        return (f"Usuario(id={self.id}, email='{self.email}, nombre='{self.email}, "
+                f" apellido='{self.email}")
 
-    # funciones para validar mail y password, se deberian mejorar
-
-    def _validar_email(self, email: str) -> str:
-        if not isinstance(email, str):
-            raise ValueError("El email debe ser una cadena")
-        email = email.strip()
-        if not email:
-            raise ValueError("El email no puede estar vacío.")
-        # Aquí se podría añadir una validación de formato más robusta (regex)
-        return email
 
 
     def _validar_password(self, password: str) -> str:
@@ -41,23 +125,8 @@ class Usuario:
 
         return password
 
-    @property
-    def email(self) -> str:
-        return self._email
 
-    @email.setter
-    def email(self, nuevo_email: str):
 
-        self._email = self._validar_email(nuevo_email)
-
-    @property
-    def password(self):
-        return self._password
-
-    @password.setter
-    def password(self, nueva_password: str):
-
-        self._password = self._validar_password(nueva_password)
 
 # esta clase se creo probando @dataclass
 @dataclass
@@ -221,33 +290,18 @@ class Paciente:
     No deberia tener password.
 
     """
-    def __init__(self,id,nombre,apellido,celular,email,obra_social,):
+    def __init__(self,id: Optional[int],nombre:str,apellido:str,celular:int,email:str,obra_social:str,):
         self.id = id
-        self.nombre = nombre
-        self.apellido = apellido
-        self.celular = celular
-        self.email = email
-        self.obra_social = obra_social
+        self._nombre = nombre
+        self._apellido = apellido
+        self._celular = celular
+        self._email = email
+        self._obra_social = obra_social
         self.turno = []
 
-    # getter
 
-    def getId(self):
-        return self.id
-    def getNombre(self):
-        return self.nombre
-    def getApellido(self):
-        return self.apellido
-    def getCelular(self):
-        return self.celular
-    def getemail(self):
-        return self.celular
-    def getEmail(self):
-        return self.celular
-    def getObra_social(self):
-        return self.obra_social
-    def getTurno(self):
-        return self.turno
+
+
 
     def __repr__(self):
         return (f"Nombre y apellido del paciente: {self.nombre}-{self.apellido}, "
