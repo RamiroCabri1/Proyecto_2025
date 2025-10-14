@@ -126,19 +126,45 @@ class Usuario(ValidatorMixin):
         return password
 
 
+class Especialidad(ValidatorMixin):
 
+   """
+   Esta clase tambien hereda de validatormixin, para usar sus funciones de validacion
 
-# esta clase se creo probando @dataclass
-@dataclass
-class Especialidad:
-    id: int
-    _nombre: str = ""
-    descripcion: str = ""
+   """
 
     @property
-    def nombre(self:str)-> str:
+    def id(self) -> int:
+        return self._id
+
+   # Id no tiene setter, sinceramente poq no se como vamos a manejar los id.
+
+    @property
+    def nombre(self) -> str:
         return self._nombre
 
+    @nombre.setter
+    def nombre(self, nuevo_nombre: str):
+
+        self._nombre = self._validar_texto_no_vacio(nuevo_nombre, "Nombre de Especialidad")
+
+    @property
+    def descripcion(self) -> str:
+        return self._descripcion
+
+    @descripcion.setter
+    def descripcion(self, nueva_descripcion: str):
+        self._descripcion = self._validar_texto_no_vacio(nueva_descripcion, "Descripción")
+
+
+    def __init__(self, id: int, nombre: str, descripcion: str = ""):
+
+        self._id = self._validar_entero_positivo(id, "ID")
+        self.nombre = nombre
+        self.descripcion = descripcion
+
+    def __repr__(self):
+        return f"Especialidad(id={self.id}, nombre='{self.nombre}')"
 
 
 #Clase Profesional
