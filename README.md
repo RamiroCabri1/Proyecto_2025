@@ -15,10 +15,12 @@ Este proyecto final tiene como objetivo **integrar los conocimientos adquiridos 
 Se desarrolló como parte de la materia **Proyecto Informático** de la **Universidad Provincial del Sudoeste**.  
 
 ## 💻 Tecnologías Utilizadas
-- **Frontend:** [HTML, CSS, Javascriot]  
+- **Frontend:** [HTML, CSS, Javascript]  
 - **Backend:** [Python, Flask]  
 - **Base de datos:** [MySQL]  
 - **Diseño / Prototipo:** [Figma]
-El prototipo interactivo fue desarrollado en **Figma** y puede visualizarse aquí:  
+
+## 🎨 Prototipo
+- Realizamos un prototipo interactivo de baja fidelidad en **Figma** y puede visualizarse aquí:  
 🔗 [Ver Prototipo en Figma](https://www.figma.com/proto/VLKxwxaKfyGF71Km0s2vim/GRUPO-2?page-id=0%3A1&node-id=2-7&viewport=254%2C720%2C0.44&t=QMWNKRRqCFA53aBt-1&scaling=contain&content-scaling=fixed&starting-point-node-id=2%3A7)  
 
