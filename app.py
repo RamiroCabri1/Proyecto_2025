@@ -55,8 +55,7 @@ def create_negocio():
     Creamos un nuevo negocio.
     Tendríamos que recibir un JSON con nombre, direccion y telefono.
     """
-    
-    # Leemos los datos JSON que nos envía el cliente
+
     datos = request.get_json()
     
     # Validamos que nos enviaron los datos mínimos
@@ -112,7 +111,7 @@ def get_negocio_por_id(id):
     conn = None
     cursor = None
     try:
-        # Conectamos a la base de datos
+
         conn = mysql.connector.connect(**db_config)
         
         # Al crear el cursor, le pasamos "dictionary=True".
@@ -172,10 +171,7 @@ def update_negocio(id):
         sql = "UPDATE Negocios SET nombre = %s, direccion = %s, telefono = %s WHERE id = %s"
         # Recordatorio: El orden de los valores es importante, el 'id' va al final.
         valores = (nombre, direccion, telefono, id)
-        
-        # Ejecutamos
-        cursor.execute(sql, valores)
-        
+        cursor.execute(sql, valores)        
         conn.commit()
 
         # Verificamos si realmente se actualizó algo
@@ -211,13 +207,9 @@ def delete_negocio(id):
     try:
         # Conectamos y preparamos la consulta SQL de BORRADO
         conn = mysql.connector.connect(**db_config)
-        cursor = conn.cursor()
-        
+        cursor = conn.cursor()        
         sql = "DELETE FROM Negocios WHERE id = %s"
-        
-        # Ejecutamos
-        cursor.execute(sql, (id,))
-        
+        cursor.execute(sql, (id,))        
         conn.commit()
 
         # Verificamos si realmente se borró algo
@@ -235,7 +227,559 @@ def delete_negocio(id):
             cursor.close()
         if conn and conn.is_connected():
             conn.close()
+            
+
+#  CRUD PARA SERVICIOS
+@app.route('/servicios', methods=['GET'])
+def get_servicios():
+    """
+    Este endpoint devuelve una lista de todos los servicios.
+    """
+    conn = None
+    cursor = None
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor(dictionary=True)
         
+        cursor.execute("SELECT * FROM Servicios") 
+        
+        servicios = cursor.fetchall() # Obtenemos todos los resultados
+        
+        return jsonify(servicios)
+
+    except mysql.connector.Error as err:
+        return jsonify({"error": str(err)}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn and conn.is_connected():
+            conn.close()
+
+
+@app.route('/servicios/<int:id>', methods=['GET'])
+def get_servicio_por_id(id):
+    """
+    Este endpoint devuelve un servicio específico por su ID.
+    """
+    conn = None
+    cursor = None
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor(dictionary=True) 
+        
+        sql = "SELECT * FROM Servicios WHERE id = %s"
+        cursor.execute(sql, (id,))
+        
+        servicio = cursor.fetchone() 
+        
+        if servicio:
+            return jsonify(servicio)
+        else:
+            return jsonify({"error": "Servicio no encontrado"}), 404
+
+    except mysql.connector.Error as err:
+        return jsonify({"error": str(err)}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn and conn.is_connected():
+            conn.close()
+
+@app.route('/servicios', methods=['POST'])
+def create_servicio():
+    """
+    Este endpoint crea un nuevo servicio.
+    Espera un JSON con nombre, descripcion, duracion_turno_min y negocio_id.
+    """
+    datos = request.get_json()
+    
+    # Validamos que nos enviaron todos los datos necesarios
+    campos_requeridos = ['nombre', 'descripcion', 'duracion_turno_min', 'negocio_id']
+    if not datos or not all(campo in datos for campo in campos_requeridos):
+        return jsonify({"error": f"Faltan datos. Se requiere: {campos_requeridos}"}), 400
+
+    nombre = datos['nombre']
+    descripcion = datos['descripcion']
+    duracion = datos['duracion_turno_min']
+    negocio_id = datos['negocio_id']
+
+    conn = None
+    cursor = None
+    try:        
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+
+        sql = "INSERT INTO Servicios (nombre, descripcion, duracion_turno_min, negocio_id) VALUES (%s, %s, %s, %s)"
+        valores = (nombre, descripcion, duracion, negocio_id)
+
+        cursor.execute(sql, valores)
+
+        conn.commit()
+        
+        nuevo_id = cursor.lastrowid
+        
+        # Devolver la respuesta
+        nuevo_servicio = {
+            "id": nuevo_id,
+            "nombre": nombre,
+            "descripcion": descripcion,
+            "duracion_turno_min": duracion,
+            "negocio_id": negocio_id
+        }
+        return jsonify(nuevo_servicio), 201 # 201 significa "Creado"
+
+    except mysql.connector.Error as err:
+        return jsonify({"error": str(err)}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn and conn.is_connected():
+            conn.close()
+
+
+@app.route('/servicios/<int:id>', methods=['PUT'])
+def update_servicio(id):
+    """
+    Este endpoint actualiza un servicio existente por su ID.
+    """
+    conn = None
+    cursor = None
+    try:
+        # Leemos los datos nuevos que nos envía el cliente
+        datos = request.get_json()
+        campos_requeridos = ['nombre', 'descripcion', 'duracion_turno_min', 'negocio_id']
+        if not datos or not all(campo in datos for campo in campos_requeridos):
+            return jsonify({"error": f"Faltan datos. Se requiere: {campos_requeridos}"}), 400
+
+        nombre = datos['nombre']
+        descripcion = datos['descripcion']
+        duracion = datos['duracion_turno_min']
+        negocio_id = datos['negocio_id']
+
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        
+        sql = "UPDATE Servicios SET nombre = %s, descripcion = %s, duracion_turno_min = %s, negocio_id = %s WHERE id = %s"
+        valores = (nombre, descripcion, duracion, negocio_id, id)
+        cursor.execute(sql, valores)        
+        conn.commit()
+
+        # Verificamos si realmente se actualizó algo
+        if cursor.rowcount == 0:
+            # Si rowcount es 0, no se encontró un servicio con ese ID
+            return jsonify({"error": "Servicio no encontrado"}), 404
+        else:
+            # Si salió bien, devolvemos el objeto actualizado
+            servicio_actualizado = {
+                "id": id,
+                "nombre": nombre,
+                "descripcion": descripcion,
+                "duracion_turno_min": duracion,
+                "negocio_id": negocio_id
+            }
+            return jsonify(servicio_actualizado), 200 # 200 OK
+
+    except mysql.connector.Error as err:
+        return jsonify({"error": str(err)}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn and conn.is_connected():
+            conn.close()
+
+@app.route('/servicios/<int:id>', methods=['DELETE'])
+def delete_servicio(id):
+    """
+    Este endpoint borra un servicio existente por su ID.
+    """
+    conn = None
+    cursor = None
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        
+        sql = "DELETE FROM Servicios WHERE id = %s"
+        cursor.execute(sql, (id,))
+        conn.commit()
+
+        if cursor.rowcount == 0:
+            return jsonify({"error": "Servicio no encontrado"}), 404
+        else:
+            return jsonify({"message": "Servicio eliminado correctamente"}), 200
+
+    except mysql.connector.Error as err:
+        return jsonify({"error": str(err)}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn and conn.is_connected():
+            conn.close()
+
+#  CRUD PARA PROFESIONALES (Es exactamente lo mismo que Servicio no me juzguen)
+@app.route('/profesionales', methods=['GET'])
+def get_profesionales():
+    """
+    Devuelve una lista de todos los profesionales.
+    """
+    conn = None
+    cursor = None
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor(dictionary=True) 
+        
+        cursor.execute("SELECT * FROM Profesionales") 
+        
+        profesionales = cursor.fetchall()
+        
+        return jsonify(profesionales)
+
+    except mysql.connector.Error as err:
+        return jsonify({"error": str(err)}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn and conn.is_connected():
+            conn.close()
+
+@app.route('/profesionales/<int:id>', methods=['GET'])
+def get_profesional_por_id(id):
+    """
+    Devuelve un profesional específico por su ID.
+    """
+    conn = None
+    cursor = None
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor(dictionary=True) 
+        
+        sql = "SELECT * FROM Profesionales WHERE id = %s"
+        cursor.execute(sql, (id,))
+        
+        profesional = cursor.fetchone() 
+        
+        if profesional:
+            return jsonify(profesional)
+        else:
+            return jsonify({"error": "Profesional no encontrado"}), 404
+
+    except mysql.connector.Error as err:
+        return jsonify({"error": str(err)}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn and conn.is_connected():
+            conn.close()
+
+@app.route('/profesionales', methods=['POST'])
+def create_profesional():
+    """
+    Crea un nuevo profesional.
+    Espera un JSON con nombre, activo y negocio_id.
+    """
+    datos = request.get_json()
+    
+    campos_requeridos = ['nombre', 'activo', 'negocio_id']
+    if not datos or not all(campo in datos for campo in campos_requeridos):
+        return jsonify({"error": f"Faltan datos. Se requiere: {campos_requeridos}"}), 400
+
+    nombre = datos['nombre']
+    activo = datos['activo']
+    negocio_id = datos['negocio_id']
+
+    conn = None
+    cursor = None
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+
+        sql = "INSERT INTO Profesionales (nombre, activo, negocio_id) VALUES (%s, %s, %s)"
+        valores = (nombre, activo, negocio_id)
+        
+        cursor.execute(sql, valores)
+        conn.commit()
+        
+        nuevo_id = cursor.lastrowid
+        
+        nuevo_profesional = {
+            "id": nuevo_id,
+            "nombre": nombre,
+            "activo": activo,
+            "negocio_id": negocio_id
+        }
+        return jsonify(nuevo_profesional), 201
+
+    except mysql.connector.Error as err:
+        return jsonify({"error": str(err)}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn and conn.is_connected():
+            conn.close()
+
+@app.route('/profesionales/<int:id>', methods=['PUT'])
+def update_profesional(id):
+    """
+    Actualiza un profesional existente por su ID.
+    """
+    conn = None
+    cursor = None
+    try:
+        datos = request.get_json()
+        campos_requeridos = ['nombre', 'activo', 'negocio_id']
+        if not datos or not all(campo in datos for campo in campos_requeridos):
+            return jsonify({"error": f"Faltan datos. Se requiere: {campos_requeridos}"}), 400
+
+        nombre = datos['nombre']
+        activo = datos['activo']
+        negocio_id = datos['negocio_id']
+
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        
+        sql = "UPDATE Profesionales SET nombre = %s, activo = %s, negocio_id = %s WHERE id = %s"
+        valores = (nombre, activo, negocio_id, id)
+        
+        cursor.execute(sql, valores)
+        conn.commit()
+
+        if cursor.rowcount == 0:
+            return jsonify({"error": "Profesional no encontrado"}), 404
+        else:
+            profesional_actualizado = {
+                "id": id,
+                "nombre": nombre,
+                "activo": activo,
+                "negocio_id": negocio_id
+            }
+            return jsonify(profesional_actualizado), 200
+
+    except mysql.connector.Error as err:
+        return jsonify({"error": str(err)}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn and conn.is_connected():
+            conn.close()
+
+#Cree para más adelante una columna "activo", no la vamos a usar si llegamos justo
+#Pero es para que todo lo que tenia el profesional se mantenga pero se oculte
+#Los turnos que tuvo y sus datos para no registrarse de 0, para un negocio de verdad es buenisimo
+#Pero tenemos que ver si llegamos, así que por ahora nos quedamos con DELETE
+@app.route('/profesionales/<int:id>', methods=['DELETE']) 
+def delete_profesional(id):
+    """
+    Borra un profesional existente por su ID.
+    """
+    conn = None
+    cursor = None
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        
+        sql = "DELETE FROM Profesionales WHERE id = %s"
+        cursor.execute(sql, (id,))
+        conn.commit()
+
+        if cursor.rowcount == 0:
+            return jsonify({"error": "Profesional no encontrado"}), 404
+        else:
+            return jsonify({"message": "Profesional eliminado correctamente"}), 200
+
+    except mysql.connector.Error as err:
+        return jsonify({"error": str(err)}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn and conn.is_connected():
+            conn.close()
+
+#  CRUD PARA CLIENTES
+
+@app.route('/clientes', methods=['GET'])
+def get_clientes():
+    """
+    Devuelve una lista de todos los clientes.
+    """
+    conn = None
+    cursor = None
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor(dictionary=True) 
+        
+        cursor.execute("SELECT * FROM Clientes") 
+        
+        clientes = cursor.fetchall()
+        
+        return jsonify(clientes)
+
+    except mysql.connector.Error as err:
+        return jsonify({"error": str(err)}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn and conn.is_connected():
+            conn.close()
+
+@app.route('/clientes/<int:id>', methods=['GET'])
+def get_cliente_por_id(id):
+    """
+    Devuelve un cliente específico por su ID.
+    """
+    conn = None
+    cursor = None
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor(dictionary=True) 
+        
+        sql = "SELECT * FROM Clientes WHERE id = %s"
+        cursor.execute(sql, (id,))
+        
+        cliente = cursor.fetchone() 
+        
+        if cliente:
+            return jsonify(cliente)
+        else:
+            return jsonify({"error": "Cliente no encontrado"}), 404
+
+    except mysql.connector.Error as err:
+        return jsonify({"error": str(err)}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn and conn.is_connected():
+            conn.close()
+
+@app.route('/clientes', methods=['POST'])
+def create_cliente():
+    """
+    Crea un nuevo cliente.
+    Espera un JSON con nombre y negocio_id (obligatorios).
+    apellido, telefono, y email son opcionales.
+    """
+    datos = request.get_json()
+    
+    # Validación de campos obligatorios
+    campos_requeridos = ['nombre', 'negocio_id']
+    if not datos or not all(campo in datos for campo in campos_requeridos):
+        return jsonify({"error": f"Faltan datos. Se requiere: {campos_requeridos}"}), 400
+
+    # Obtenemos los datos
+    nombre = datos['nombre']
+    negocio_id = datos['negocio_id']
+    # Usamos .get() para los campos opcionales, si no vienen, guarda None
+    apellido = datos.get('apellido')
+    telefono = datos.get('telefono')
+    email = datos.get('email')
+
+    conn = None
+    cursor = None
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+
+        sql = "INSERT INTO Clientes (nombre, apellido, telefono, email, negocio_id) VALUES (%s, %s, %s, %s, %s)"
+        valores = (nombre, apellido, telefono, email, negocio_id)
+        
+        cursor.execute(sql, valores)
+        conn.commit()
+        
+        nuevo_id = cursor.lastrowid
+        
+        nuevo_cliente = {
+            "id": nuevo_id,
+            "nombre": nombre,
+            "apellido": apellido,
+            "telefono": telefono,
+            "email": email,
+            "negocio_id": negocio_id
+        }
+        return jsonify(nuevo_cliente), 201
+
+    except mysql.connector.Error as err:
+        return jsonify({"error": str(err)}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn and conn.is_connected():
+            conn.close()
+
+@app.route('/clientes/<int:id>', methods=['PUT'])
+def update_cliente(id):
+    """
+    Actualiza un cliente existente por su ID.
+    """
+    conn = None
+    cursor = None
+    try:
+        datos = request.get_json()
+        campos_requeridos = ['nombre', 'negocio_id']
+        if not datos or not all(campo in datos for campo in campos_requeridos):
+            return jsonify({"error": f"Faltan datos. Se requiere: {campos_requeridos}"}), 400
+
+        nombre = datos['nombre']
+        negocio_id = datos['negocio_id']
+        apellido = datos.get('apellido')
+        telefono = datos.get('telefono')
+        email = datos.get('email')
+
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        
+        sql = "UPDATE Clientes SET nombre = %s, apellido = %s, telefono = %s, email = %s, negocio_id = %s WHERE id = %s"
+        valores = (nombre, apellido, telefono, email, negocio_id, id)
+        
+        cursor.execute(sql, valores)
+        conn.commit()
+
+        if cursor.rowcount == 0:
+            return jsonify({"error": "Cliente no encontrado"}), 404
+        else:
+            cliente_actualizado = {
+                "id": id,
+                "nombre": nombre,
+                "apellido": apellido,
+                "telefono": telefono,
+                "email": email,
+                "negocio_id": negocio_id
+            }
+            return jsonify(cliente_actualizado), 200
+
+    except mysql.connector.Error as err:
+        return jsonify({"error": str(err)}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn and conn.is_connected():
+            conn.close()
+
+@app.route('/clientes/<int:id>', methods=['DELETE'])
+def delete_cliente(id):
+    """
+    Borra un cliente existente por su ID (Hard Delete).
+    """
+    conn = None
+    cursor = None
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        
+        sql = "DELETE FROM Clientes WHERE id = %s"
+        cursor.execute(sql, (id,))
+        conn.commit()
+
+        if cursor.rowcount == 0:
+            return jsonify({"error": "Cliente no encontrado"}), 404
+        else:
+            return jsonify({"message": "Cliente eliminado correctamente"}), 200
+
+    except mysql.connector.Error as err:
+        return jsonify({"error": str(err)}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn and conn.is_connected():
+            conn.close()
+
 # Iniciamos el .py
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
