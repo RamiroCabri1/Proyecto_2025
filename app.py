@@ -597,9 +597,7 @@ def delete_profesional(id):
 
 @app.route('/clientes', methods=['GET'])
 def get_clientes():
-    """
-    Devuelve una lista de todos los clientes.
-    """
+    
     conn = None
     cursor = None
     try:
@@ -622,9 +620,7 @@ def get_clientes():
 
 @app.route('/clientes/<int:id>', methods=['GET'])
 def get_cliente_por_id(id):
-    """
-    Devuelve un cliente específico por su ID.
-    """
+    
     conn = None
     cursor = None
     try:
@@ -651,22 +647,19 @@ def get_cliente_por_id(id):
 
 @app.route('/clientes', methods=['POST'])
 def create_cliente():
-    """
-    Crea un nuevo cliente.
-    Espera un JSON con nombre y negocio_id (obligatorios).
-    apellido, telefono, y email son opcionales.
-    """
+    
     datos = request.get_json()
     
-    # Validación de campos obligatorios
-    campos_requeridos = ['nombre', 'negocio_id']
+    # Dni y telefono obligatorio ya que es el maximo identificante y un contacto
+    campos_requeridos = ['nombre', 'dni', 'telefono', 'negocio_id']
     if not datos or not all(campo in datos for campo in campos_requeridos):
         return jsonify({"error": f"Faltan datos. Se requiere: {campos_requeridos}"}), 400
+    
 
-    # Obtenemos los datos
     nombre = datos['nombre']
+    dni = datos['dni']
+    telefono = datos['telefono']
     negocio_id = datos['negocio_id']
-    # Usamos .get() para los campos opcionales, si no vienen, guarda None
     apellido = datos.get('apellido')
     telefono = datos.get('telefono')
     email = datos.get('email')
@@ -677,8 +670,8 @@ def create_cliente():
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor()
 
-        sql = "INSERT INTO Clientes (nombre, apellido, telefono, email, negocio_id) VALUES (%s, %s, %s, %s, %s)"
-        valores = (nombre, apellido, telefono, email, negocio_id)
+        sql = "INSERT INTO Clientes (nombre, apellido, dni, telefono, email, negocio_id) VALUES (%s, %s, %s, %s, %s, %s)"
+        valores = (nombre, apellido, dni, telefono, email, negocio_id)
         
         cursor.execute(sql, valores)
         conn.commit()
@@ -689,6 +682,7 @@ def create_cliente():
             "id": nuevo_id,
             "nombre": nombre,
             "apellido": apellido,
+            "dni": dni,
             "telefono": telefono,
             "email": email,
             "negocio_id": negocio_id
@@ -696,7 +690,11 @@ def create_cliente():
         return jsonify(nuevo_cliente), 201
 
     except mysql.connector.Error as err:
-        return jsonify({"error": str(err)}), 500
+        # Manejamos el error si el DNI ya existe
+        if err.errno == 1062: # 1062 = "Duplicate entry"
+            return jsonify({"error": "Ya existe un cliente con ese DNI para este negocio"}), 409 # 409 Conflict
+        else:
+            return jsonify({"error": str(err)}), 500
     finally:
         if cursor:
             cursor.close()
@@ -705,28 +703,31 @@ def create_cliente():
 
 @app.route('/clientes/<int:id>', methods=['PUT'])
 def update_cliente(id):
-    """
-    Actualiza un cliente existente por su ID.
-    """
+    
     conn = None
     cursor = None
     try:
         datos = request.get_json()
-        campos_requeridos = ['nombre', 'negocio_id']
+        
+        # Agregamos dni y telefono a los campos requeridos
+        campos_requeridos = ['nombre', 'dni', 'telefono', 'negocio_id']
         if not datos or not all(campo in datos for campo in campos_requeridos):
             return jsonify({"error": f"Faltan datos. Se requiere: {campos_requeridos}"}), 400
 
         nombre = datos['nombre']
+        dni = datos['dni']
+        telefono = datos['telefono']
         negocio_id = datos['negocio_id']
         apellido = datos.get('apellido')
         telefono = datos.get('telefono')
         email = datos.get('email')
+        
 
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor()
         
-        sql = "UPDATE Clientes SET nombre = %s, apellido = %s, telefono = %s, email = %s, negocio_id = %s WHERE id = %s"
-        valores = (nombre, apellido, telefono, email, negocio_id, id)
+        sql = "UPDATE Clientes SET nombre = %s, apellido = %s, dni = %s, telefono = %s, email = %s, negocio_id = %s WHERE id = %s"
+        valores = (nombre, apellido, dni, telefono, email, negocio_id, id)
         
         cursor.execute(sql, valores)
         conn.commit()
@@ -735,17 +736,17 @@ def update_cliente(id):
             return jsonify({"error": "Cliente no encontrado"}), 404
         else:
             cliente_actualizado = {
-                "id": id,
-                "nombre": nombre,
-                "apellido": apellido,
-                "telefono": telefono,
-                "email": email,
-                "negocio_id": negocio_id
+                "id": id, "nombre": nombre, "apellido": apellido, "dni": dni,
+                "telefono": telefono, "email": email, "negocio_id": negocio_id
             }
             return jsonify(cliente_actualizado), 200
 
     except mysql.connector.Error as err:
-        return jsonify({"error": str(err)}), 500
+        # Manejamos el error si el DNI ya existe
+        if err.errno == 1062:
+            return jsonify({"error": "Ya existe un cliente con ese DNI para este negocio"}), 409
+        else:
+            return jsonify({"error": str(err)}), 500
     finally:
         if cursor:
             cursor.close()
@@ -753,10 +754,7 @@ def update_cliente(id):
             conn.close()
 
 @app.route('/clientes/<int:id>', methods=['DELETE'])
-def delete_cliente(id):
-    """
-    Borra un cliente existente por su ID (Hard Delete).
-    """
+def delete_cliente(id):    
     conn = None
     cursor = None
     try:
@@ -771,6 +769,95 @@ def delete_cliente(id):
             return jsonify({"error": "Cliente no encontrado"}), 404
         else:
             return jsonify({"message": "Cliente eliminado correctamente"}), 200
+
+    except mysql.connector.Error as err:
+        return jsonify({"error": str(err)}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn and conn.is_connected():
+            conn.close()
+
+#  CRUD PARA DISPONIBILIDAD
+
+@app.route('/profesionales/<int:id_profesional>/disponibilidad', methods=['GET'])
+def get_disponibilidad_profesional(id_profesional):
+    """
+    Devuelve la lista de horarios de un profesional específico.
+    """
+    conn = None
+    cursor = None
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor(dictionary=True) 
+        
+        # Primero, verificamos si el profesional existe para evitar un error 404
+        cursor.execute("SELECT id FROM Profesionales WHERE id = %s", (id_profesional,))
+        if not cursor.fetchone():
+            return jsonify({"error": "Profesional no encontrado"}), 404
+        
+        # Si el profesional existe, buscamos su disponibilidad
+        sql = "SELECT * FROM Disponibilidad WHERE profesional_id = %s"
+        cursor.execute(sql, (id_profesional,))
+        
+        disponibilidades = cursor.fetchall()        
+        return jsonify(disponibilidades)
+
+    except mysql.connector.Error as err:
+        return jsonify({"error": str(err)}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn and conn.is_connected():
+            conn.close()
+            
+@app.route('/profesionales/<int:id_profesional>/disponibilidad', methods=['POST'])
+def create_disponibilidad_profesional(id_profesional):
+    """
+    Crea un nuevo horario de disponibilidad para un profesional específico.
+    """
+    conn = None
+    cursor = None
+    
+    # Leemos los datos del JSON
+    datos = request.get_json()
+    
+    campos_requeridos = ['dia_semana', 'hora_inicio', 'hora_fin']
+    if not datos or not all(campo in datos for campo in campos_requeridos):
+        return jsonify({"error": f"Faltan datos. Se requiere: {campos_requeridos}"}), 400
+
+    dia_semana = datos['dia_semana']
+    hora_inicio = datos['hora_inicio']
+    hora_fin = datos['hora_fin']
+    
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        
+        # Verificamos que el profesional exista
+        cursor.execute("SELECT id FROM Profesionales WHERE id = %s", (id_profesional,))
+        if not cursor.fetchone():
+            return jsonify({"error": "Profesional no encontrado"}), 404
+
+        # Insertamos el nuevo horario
+        sql = "INSERT INTO Disponibilidad (profesional_id, dia_semana, hora_inicio, hora_fin) VALUES (%s, %s, %s, %s)"
+        # Usamos el id_profesional de la URL y los datos del JSON
+        valores = (id_profesional, dia_semana, hora_inicio, hora_fin)
+        
+        cursor.execute(sql, valores)
+        conn.commit()
+        
+        # Devolvemos el horario recién creado
+        nuevo_id = cursor.lastrowid
+        nuevo_horario = {
+            "id": nuevo_id,
+            "profesional_id": id_profesional,
+            "dia_semana": dia_semana,
+            "hora_inicio": hora_inicio,
+            "hora_fin": hora_fin
+        }
+        
+        return jsonify(nuevo_horario), 201
 
     except mysql.connector.Error as err:
         return jsonify({"error": str(err)}), 500
