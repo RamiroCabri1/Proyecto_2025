@@ -2,6 +2,8 @@ from flask import Flask, jsonify, request
 import mysql.connector
 import os
 from dotenv import load_dotenv
+from datetime import datetime
+
 
 # Creamos una instancia de Flask
 app = Flask(__name__)
@@ -784,24 +786,37 @@ def delete_cliente(id):
 def get_disponibilidad_profesional(id_profesional):
     """
     Devuelve la lista de horarios de un profesional específico.
+    Formatea la hora como HH:MM.
     """
     conn = None
     cursor = None
     try:
         conn = mysql.connector.connect(**db_config)
-        cursor = conn.cursor(dictionary=True) 
-        
-        # Primero, verificamos si el profesional existe para evitar un error 404
+        cursor = conn.cursor(dictionary=True)         
         cursor.execute("SELECT id FROM Profesionales WHERE id = %s", (id_profesional,))
         if not cursor.fetchone():
-            return jsonify({"error": "Profesional no encontrado"}), 404
-        
-        # Si el profesional existe, buscamos su disponibilidad
+            return jsonify({"error": "Profesional no encontrado"}), 404        
         sql = "SELECT * FROM Disponibilidad WHERE profesional_id = %s"
         cursor.execute(sql, (id_profesional,))
         
-        disponibilidades = cursor.fetchall()        
-        return jsonify(disponibilidades)
+        disponibilidades_raw = cursor.fetchall()
+        
+        disponibilidades_limpia = []
+        for d in disponibilidades_raw:
+            
+            # Convertimos a string (ej: "9:00:00") y cortamos los últimos 3 caracteres (:00)
+            d['hora_inicio'] = str(d['hora_inicio'])[:-3]
+            d['hora_fin'] = str(d['hora_fin'])[:-3]
+            
+            # Si la hora es de un solo dígito (ej: "9:00"), le agregamos un 0
+            if len(d['hora_inicio']) == 4:
+                d['hora_inicio'] = '0' + d['hora_inicio']
+            if len(d['hora_fin']) == 4:
+                d['hora_fin'] = '0' + d['hora_fin']
+                
+            disponibilidades_limpia.append(d)
+        
+        return jsonify(disponibilidades_limpia)
 
     except mysql.connector.Error as err:
         return jsonify({"error": str(err)}), 500
@@ -866,7 +881,232 @@ def create_disponibilidad_profesional(id_profesional):
             cursor.close()
         if conn and conn.is_connected():
             conn.close()
+# (La función create_disponibilidad_profesional va aquí arriba)
 
+@app.route('/disponibilidad/<int:id>', methods=['PUT'])
+def update_disponibilidad(id):
+    """
+    Actualiza un horario de disponibilidad específico por su ID.
+    """
+    conn = None
+    cursor = None
+    try:
+        datos = request.get_json()
+        campos_requeridos = ['dia_semana', 'hora_inicio', 'hora_fin', 'profesional_id']
+        if not datos or not all(campo in datos for campo in campos_requeridos):
+            return jsonify({"error": f"Faltan datos. Se requiere: {campos_requeridos}"}), 400
+
+        dia_semana = datos['dia_semana']
+        hora_inicio = datos['hora_inicio']
+        hora_fin = datos['hora_fin']
+        profesional_id = datos['profesional_id']
+
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        
+        sql = "UPDATE Disponibilidad SET profesional_id = %s, dia_semana = %s, hora_inicio = %s, hora_fin = %s WHERE id = %s"
+        valores = (profesional_id, dia_semana, hora_inicio, hora_fin, id)
+        
+        cursor.execute(sql, valores)
+        conn.commit()
+
+        if cursor.rowcount == 0:
+            return jsonify({"error": "Horario de disponibilidad no encontrado"}), 404
+        else:
+            horario_actualizado = {
+                "id": id,
+                "profesional_id": profesional_id,
+                "dia_semana": dia_semana,
+                "hora_inicio": hora_inicio,
+                "hora_fin": hora_fin
+            }
+            return jsonify(horario_actualizado), 200
+
+    except mysql.connector.Error as err:
+        return jsonify({"error": str(err)}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn and conn.is_connected():
+            conn.close()
+
+@app.route('/disponibilidad/<int:id>', methods=['DELETE'])
+def delete_disponibilidad(id):
+    """
+    Borra un horario de disponibilidad específico por su ID.
+    """
+    conn = None
+    cursor = None
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        
+        sql = "DELETE FROM Disponibilidad WHERE id = %s"
+        cursor.execute(sql, (id,))
+        conn.commit()
+
+        if cursor.rowcount == 0:
+            return jsonify({"error": "Horario de disponibilidad no encontrado"}), 404
+        else:
+            return jsonify({"message": "Horario de disponibilidad eliminado correctamente"}), 200
+
+    except mysql.connector.Error as err:
+        return jsonify({"error": str(err)}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn and conn.is_connected():
+            conn.close()
+
+            
+@app.route('/turnos', methods=['POST'])
+def create_turno():
+    """
+    Crea un nuevo turno, validando la disponibilidad del profesional
+    y que el turno no esté ya ocupado.
+    """
+    datos = request.get_json()
+    
+    campos_requeridos = ['fecha_hora', 'cliente_id', 'profesional_id', 'servicio_id', 'negocio_id']
+    if not datos or not all(campo in datos for campo in campos_requeridos):
+        return jsonify({"error": f"Faltan datos. Se requiere: {campos_requeridos}"}), 400
+
+    try:
+        fecha_hora_obj = datetime.strptime(datos['fecha_hora'], '%Y-%m-%d %H:%M:%S')
+        dia_semana = fecha_hora_obj.weekday() + 1
+        hora_turno = fecha_hora_obj.time().strftime('%H:%M:%S')
+    except ValueError:
+        return jsonify({"error": "Formato de fecha_hora incorrecto. Usar YYYY-MM-DD HH:MM:SS"}), 400
+
+    cliente_id = datos['cliente_id']
+    profesional_id = datos['profesional_id']
+    servicio_id = datos['servicio_id']
+    negocio_id = datos['negocio_id']
+
+    conn = None
+    cursor = None
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor(dictionary=True)
+
+        # Primer chequeo: ¿El profesional trabaja en ese horario?
+        
+        sql_disponibilidad = """
+            SELECT * FROM Disponibilidad 
+            WHERE profesional_id = %s AND dia_semana = %s 
+            AND TIME(%s) BETWEEN hora_inicio AND hora_fin
+        """
+        cursor.execute(sql_disponibilidad, (profesional_id, dia_semana, hora_turno))
+        
+        # Usamos fetchall() para limpiar el buffer
+        disponibilidad_encontrada = cursor.fetchall() 
+        
+        if not disponibilidad_encontrada: # Comprobamos si la lista está vacía
+            return jsonify({"error": "El profesional no se encuentra disponible en ese día u horario."}), 409
+
+        # Segunda validación: ¿El turno ya está ocupado?
+        sql_ocupado = """
+            SELECT id FROM Turnos 
+            WHERE profesional_id = %s AND fecha_hora = %s
+        """
+        cursor.execute(sql_ocupado, (profesional_id, datos['fecha_hora']))
+        
+        # Otra vez usamos fetchall() para limpiar el buffer
+        turno_encontrado = cursor.fetchall()
+        
+        if turno_encontrado: # Comprobamos si la lista NO está vacía
+            return jsonify({"error": "El turno ya se encuentra ocupado."}), 409
+            
+        # Si todo sale bien nos devuelve el turno
+        sql_insert = """
+            INSERT INTO Turnos (fecha_hora, estado, cliente_id, profesional_id, servicio_id, negocio_id) 
+            VALUES (%s, %s, %s, %s, %s, %s)
+        """
+        valores = (datos['fecha_hora'], 'Confirmado', cliente_id, profesional_id, servicio_id, negocio_id)
+        
+        cursor.execute(sql_insert, valores)
+        conn.commit()
+        
+        nuevo_id = cursor.lastrowid
+        
+        nuevo_turno = {
+            "id": nuevo_id,
+            "fecha_hora": datos['fecha_hora'],
+            "estado": "Confirmado",
+            "cliente_id": cliente_id,
+            "profesional_id": profesional_id,
+            "servicio_id": servicio_id,
+            "negocio_id": negocio_id
+        }
+        return jsonify(nuevo_turno), 201
+
+    except mysql.connector.Error as err:
+        return jsonify({"error": str(err)}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn and conn.is_connected():
+            conn.close()
+            
+@app.route('/turnos', methods=['GET'])
+def get_turnos():
+    """
+    Devuelve una lista de todos los turnos.
+    """
+    conn = None
+    cursor = None
+    try:
+        conn = mysql.connector.connect(**db_config)
+        # Usamos dictionary=True para que sea más fácil
+        cursor = conn.cursor(dictionary=True) 
+        
+        cursor.execute("SELECT * FROM Turnos") 
+        
+        turnos = cursor.fetchall()
+        
+        # ¡IMPORTANTE! Tenemos que convertir la fecha/hora a string
+        # porque 'datetime' no es serializable en JSON
+        for turno in turnos:
+            turno['fecha_hora'] = turno['fecha_hora'].strftime('%Y-%m-%d %H:%M:%S')
+            
+        return jsonify(turnos)
+
+    except mysql.connector.Error as err:
+        return jsonify({"error": str(err)}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn and conn.is_connected():
+            conn.close()
+            
+@app.route('/turnos/<int:id>', methods=['DELETE'])
+def delete_turno(id):
+    """
+    Borra un turno existente por su ID.
+    """
+    conn = None
+    cursor = None
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        
+        sql = "DELETE FROM Turnos WHERE id = %s"
+        cursor.execute(sql, (id,))
+        conn.commit()
+
+        if cursor.rowcount == 0:
+            return jsonify({"error": "Turno no encontrado"}), 404
+        else:
+            return jsonify({"message": "Turno eliminado correctamente"}), 200
+
+    except mysql.connector.Error as err:
+        return jsonify({"error": str(err)}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn and conn.is_connected():
+            conn.close()
+            
 # Iniciamos el .py
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
