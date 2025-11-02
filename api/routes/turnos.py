@@ -1,13 +1,13 @@
-# api/routes/turnos.py
-from flask import Blueprint, jsonify, request
-from api.models.turno import Turno # Importamos el nuevo modelo
-from api.db.db import mysql # Importamos el objeto mysql
-from datetime import datetime # Importamos datetime para las validaciones
 
-# Creamos el "plano" (blueprint)
+from flask import Blueprint, jsonify, request
+from api.models.turno import Turno 
+from api.db.db import mysql 
+from datetime import datetime
+
+
 turnos_bp = Blueprint('turnos', __name__)
 
-# POST (Crear Turno - El más complejo)
+# POST (Crear Turno)
 @turnos_bp.route('/turnos', methods=['POST'])
 def create_turno():
     datos = request.get_json()
@@ -32,7 +32,7 @@ def create_turno():
     try:
         cursor = mysql.connection.cursor() # Usamos dictionary=True para leer fácil
 
-        # === VALIDACIÓN 1: Disponibilidad ===
+        # Validación 1: Disponibilidad
         sql_disponibilidad = """
             SELECT * FROM Disponibilidad 
             WHERE profesional_id = %s AND dia_semana = %s 
@@ -44,7 +44,7 @@ def create_turno():
         if not disponibilidad_encontrada:
             return jsonify({"error": "El profesional no se encuentra disponible en ese día u horario."}), 409
 
-        # === VALIDACIÓN 2: Turno Ocupado ===
+        # Validación 2: Turno Ocupado
         sql_ocupado = "SELECT id FROM Turnos WHERE profesional_id = %s AND fecha_hora = %s"
         cursor.execute(sql_ocupado, (profesional_id, datos['fecha_hora']))
         turno_encontrado = cursor.fetchall()
@@ -52,7 +52,7 @@ def create_turno():
         if turno_encontrado:
             return jsonify({"error": "El turno ya se encuentra ocupado."}), 409
             
-        # === TODO OK, CREAMOS EL TURNO ===
+        # En este punto creamos el turno
         
         # Cerramos el cursor dictionary=True y abrimos uno normal para INSERT
         cursor.close()

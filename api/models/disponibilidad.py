@@ -1,14 +1,14 @@
-# api/models/disponibilidad.py
+
 from datetime import timedelta
 
 class Disponibilidad():
     def __init__(self, row):
-        # (id, profesional_id, dia_semana, hora_inicio, hora_fin)
+      
         self._id = row[0]
         self._profesional_id = row[1]
         self._dia_semana = row[2]
         self._hora_inicio = row[3] # Esto es un timedelta
-        self._hora_fin = row[4]    # Esto es un timedelta
+        self._hora_fin = row[4]  # (Sería la diferencia de tiempo entre una y la otra)
     
     def to_json(self):
         # Convertimos los timedelta a string HH:MM

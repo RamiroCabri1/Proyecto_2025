@@ -1,7 +1,7 @@
-# api/models/servicio.py
+
 class Servicio():
     def __init__(self, row):
-        # (id, nombre, descripcion, duracion_turno_min, negocio_id)
+        
         self._id = row[0]
         self._nombre = row[1]
         self._descripcion = row[2]

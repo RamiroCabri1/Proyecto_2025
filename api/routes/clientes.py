@@ -1,7 +1,7 @@
-# api/routes/clientes.py
+
 from flask import Blueprint, jsonify, request
-from api.models.cliente import Cliente # Importamos el nuevo modelo
-from api.db.db import mysql # Importamos el objeto mysql
+from api.models.cliente import Cliente
+from api.db.db import mysql
 
 # Creamos el "plano" (blueprint) de clientes
 clientes_bp = Blueprint('clientes', __name__)
@@ -81,7 +81,7 @@ def create_cliente():
         }
         return jsonify(nuevo_cliente), 201
     except Exception as err:
-        # Manejamos el error si el DNI ya existe (1062 = Duplicate entry)
+        # Manejamos el error si el DNI ya existe (No puede haber dos clientes distintos con el mismo dni)
         if "1062" in str(err): 
             return jsonify({"error": "Ya existe un cliente con ese DNI para este negocio"}), 409
         else:

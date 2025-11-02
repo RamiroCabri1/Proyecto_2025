@@ -1,7 +1,7 @@
-# api/models/profesional.py
+
 class Profesional():
     def __init__(self, row):
-        # El orden correcto de SELECT * es (id, nombre, negocio_id, activo)
+        # Recordatorio: el orden correcto de SELECT * es (id, nombre, negocio_id, activo)
         self._id = row[0]
         self._nombre = row[1]
         self._negocio_id = row[2]

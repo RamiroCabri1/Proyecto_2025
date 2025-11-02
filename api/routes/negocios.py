@@ -1,9 +1,8 @@
-# api/routes/negocios.py
-from flask import Blueprint, jsonify, request
-from api.models.negocio import Negocio # Importamos nuestro formateador
-from api.db.db import mysql # Importamos el objeto mysql de la guía
 
-# Creamos el "plano" (blueprint) de negocios
+from flask import Blueprint, jsonify, request
+from api.models.negocio import Negocio 
+from api.db.db import mysql
+
 negocios_bp = Blueprint('negocios', __name__)
 
 # GET Todos
@@ -11,13 +10,13 @@ negocios_bp = Blueprint('negocios', __name__)
 def get_negocios():
     cursor = None
     try:
-        # CAMBIO: Así se conecta flask-mysqldb
+
         cursor = mysql.connection.cursor() 
         
         cursor.execute("SELECT id, nombre, direccion, telefono FROM Negocios") 
         filas = cursor.fetchall()
         
-        # CAMBIO: Usamos el modelo para formatear
+
         lista_negocios = []
         for fila in filas:
             objNegocio = Negocio(fila) 
@@ -73,7 +72,7 @@ def create_negocio():
         valores = (nombre, direccion, telefono)
         
         cursor.execute(sql, valores)
-        # CAMBIO: El commit se hace sobre la conexión
+        # El commit se hace sobre la conexión
         mysql.connection.commit() 
         
         nuevo_id = cursor.lastrowid
@@ -133,7 +132,7 @@ def delete_negocio(id):
         
         sql = "DELETE FROM Negocios WHERE id = %s"
         cursor.execute(sql, (id,))
-        mysql.connection.commit() # Guardamos
+        mysql.connection.commit()
 
         if cursor.rowcount == 0:
             return jsonify({"error": "Negocio no encontrado"}), 404

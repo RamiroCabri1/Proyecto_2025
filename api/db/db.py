@@ -2,4 +2,5 @@ from flask_mysqldb import MySQL
 
 # Creamos el objeto mysql VACÍO.
 # Se inicializará más tarde en __init__.py
+# Sería el contenedor de toda nuestra base
 mysql = MySQL()

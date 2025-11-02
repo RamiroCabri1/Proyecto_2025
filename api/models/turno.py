@@ -1,11 +1,11 @@
-# api/models/turno.py
+
 from datetime import datetime
 
 class Turno():
     def __init__(self, row):
-        # (id, fecha_hora, estado, cliente_id, profesional_id, servicio_id, negocio_id)
+        
         self._id = row[0]
-        self._fecha_hora = row[1] # Esto es un objeto datetime
+        self._fecha_hora = row[1] # Objeto datetime
         self._estado = row[2]
         self._cliente_id = row[3]
         self._profesional_id = row[4]
@@ -13,7 +13,7 @@ class Turno():
         self._negocio_id = row[6]
     
     def to_json(self):
-        # Formateamos el objeto datetime a un string estándar
+        # Formateamos a string estándar
         fecha_hora_str = self._fecha_hora.strftime('%Y-%m-%d %H:%M:%S')
 
         return {

@@ -1,4 +1,4 @@
-# api/routes/disponibilidad.py
+
 from flask import Blueprint, jsonify, request
 from api.models.disponibilidad import Disponibilidad # Importamos el nuevo modelo
 from api.db.db import mysql # Importamos el objeto mysql

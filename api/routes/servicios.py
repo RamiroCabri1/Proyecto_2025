@@ -1,9 +1,10 @@
-# api/routes/servicios.py
-from flask import Blueprint, jsonify, request
-from api.models.servicio import Servicio # Importamos el nuevo modelo
-from api.db.db import mysql # Importamos el objeto mysql
 
-# Creamos el "plano" (blueprint) de servicios
+from flask import Blueprint, jsonify, request
+from api.models.servicio import Servicio 
+from api.db.db import mysql 
+
+
+
 servicios_bp = Blueprint('servicios', __name__)
 
 # GET Todos

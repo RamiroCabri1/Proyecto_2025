@@ -1,9 +1,9 @@
-# api/routes/profesionales.py
-from flask import Blueprint, jsonify, request
-from api.models.profesional import Profesional # Importamos el nuevo modelo
-from api.db.db import mysql # Importamos el objeto mysql
 
-# Creamos el "plano" (blueprint) de profesionales
+from flask import Blueprint, jsonify, request
+from api.models.profesional import Profesional 
+from api.db.db import mysql
+
+
 profesionales_bp = Blueprint('profesionales', __name__)
 
 # GET Todos

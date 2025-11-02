@@ -1,7 +1,7 @@
-# api/models/cliente.py
+
 class Cliente():
     def __init__(self, row):
-        # (id, nombre, apellido, dni, telefono, email, negocio_id)
+        
         self._id = row[0]
         self._nombre = row[1]
         self._apellido = row[2]

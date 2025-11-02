@@ -2,7 +2,7 @@ from flask import Flask
 from flask_cors import CORS
 from dotenv import load_dotenv
 from api.db.db import mysql 
-from datetime import datetime # ¡Importante para los turnos!
+from datetime import datetime
 import os
 
 load_dotenv()
@@ -17,7 +17,7 @@ app.config['MYSQL_DB'] = os.getenv('DB_NAME')
 
 mysql.init_app(app)
 
-# --- Importamos y Registramos las rutas ---
+# Importamos y Registramos las rutas
 from api.routes.negocios import negocios_bp
 app.register_blueprint(negocios_bp) 
 
@@ -36,4 +36,3 @@ app.register_blueprint(disponibilidad_bp)
 from api.routes.turnos import turnos_bp
 app.register_blueprint(turnos_bp)
 
-# (Aquí abajo registraremos el resto)
