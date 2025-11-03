@@ -1,4 +1,4 @@
-
+from api.utils import token_required
 from flask import Blueprint, jsonify, request
 from api.models.negocio import Negocio 
 from api.db.db import mysql
@@ -7,6 +7,7 @@ negocios_bp = Blueprint('negocios', __name__)
 
 # GET Todos
 @negocios_bp.route('/negocios', methods=['GET'])
+@token_required
 def get_negocios():
     cursor = None
     try:
@@ -32,6 +33,7 @@ def get_negocios():
 
 # GET por ID
 @negocios_bp.route('/negocios/<int:id>', methods=['GET'])
+@token_required
 def get_negocio_por_id(id):
     cursor = None
     try:
@@ -56,6 +58,7 @@ def get_negocio_por_id(id):
 
 # POST (Crear)
 @negocios_bp.route('/negocios', methods=['POST'])
+@token_required
 def create_negocio():
     datos = request.get_json()
     if not datos or 'nombre' not in datos or 'direccion' not in datos or 'telefono' not in datos:
@@ -90,6 +93,7 @@ def create_negocio():
 
 # PUT (Actualizar)
 @negocios_bp.route('/negocios/<int:id>', methods=['PUT'])
+@token_required
 def update_negocio(id):
     cursor = None
     try:
@@ -125,6 +129,7 @@ def update_negocio(id):
 
 
 @negocios_bp.route('/negocios/<int:id>', methods=['DELETE'])
+@token_required
 def delete_negocio(id):
     cursor = None
     try:

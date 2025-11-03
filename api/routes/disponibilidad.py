@@ -1,4 +1,4 @@
-
+from api.utils import token_required
 from flask import Blueprint, jsonify, request
 from api.models.disponibilidad import Disponibilidad # Importamos el nuevo modelo
 from api.db.db import mysql # Importamos el objeto mysql
@@ -8,6 +8,7 @@ disponibilidad_bp = Blueprint('disponibilidad', __name__)
 
 # GET de horarios por Profesional
 @disponibilidad_bp.route('/profesionales/<int:id_profesional>/disponibilidad', methods=['GET'])
+@token_required
 def get_disponibilidad_profesional(id_profesional):
     cursor = None
     try:
@@ -38,6 +39,7 @@ def get_disponibilidad_profesional(id_profesional):
 
 # POST (Crear horario para un Profesional)
 @disponibilidad_bp.route('/profesionales/<int:id_profesional>/disponibilidad', methods=['POST'])
+@token_required
 def create_disponibilidad_profesional(id_profesional):
     datos = request.get_json()
     
@@ -80,6 +82,7 @@ def create_disponibilidad_profesional(id_profesional):
 
 # PUT (Actualizar un horario específico)
 @disponibilidad_bp.route('/disponibilidad/<int:id>', methods=['PUT'])
+@token_required
 def update_disponibilidad(id):
     cursor = None
     try:
@@ -117,6 +120,7 @@ def update_disponibilidad(id):
 
 # DELETE (Borrar un horario específico)
 @disponibilidad_bp.route('/disponibilidad/<int:id>', methods=['DELETE'])
+@token_required
 def delete_disponibilidad(id):
     cursor = None
     try:

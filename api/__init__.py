@@ -2,7 +2,7 @@ from flask import Flask
 from flask_cors import CORS
 from dotenv import load_dotenv
 from api.db.db import mysql 
-from datetime import datetime
+from datetime import datetime # Importante para los turnos
 import os
 
 load_dotenv()
@@ -36,3 +36,5 @@ app.register_blueprint(disponibilidad_bp)
 from api.routes.turnos import turnos_bp
 app.register_blueprint(turnos_bp)
 
+from api.routes.usuarios import usuarios_bp
+app.register_blueprint(usuarios_bp)

@@ -1,4 +1,4 @@
-
+from api.utils import token_required
 from flask import Blueprint, jsonify, request
 from api.models.turno import Turno 
 from api.db.db import mysql 
@@ -9,6 +9,7 @@ turnos_bp = Blueprint('turnos', __name__)
 
 # POST (Crear Turno)
 @turnos_bp.route('/turnos', methods=['POST'])
+@token_required
 def create_turno():
     datos = request.get_json()
     
@@ -84,6 +85,7 @@ def create_turno():
 
 # GET Todos
 @turnos_bp.route('/turnos', methods=['GET'])
+@token_required
 def get_turnos():
     cursor = None
     try:
@@ -105,6 +107,7 @@ def get_turnos():
 
 # DELETE
 @turnos_bp.route('/turnos/<int:id>', methods=['DELETE'])
+@token_required
 def delete_turno(id):
     cursor = None
     try:

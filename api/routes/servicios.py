@@ -1,4 +1,4 @@
-
+from api.utils import token_required
 from flask import Blueprint, jsonify, request
 from api.models.servicio import Servicio 
 from api.db.db import mysql 
@@ -9,6 +9,7 @@ servicios_bp = Blueprint('servicios', __name__)
 
 # GET Todos
 @servicios_bp.route('/servicios', methods=['GET'])
+@token_required
 def get_servicios():
     cursor = None
     try:
@@ -30,6 +31,7 @@ def get_servicios():
 
 # GET por ID
 @servicios_bp.route('/servicios/<int:id>', methods=['GET'])
+@token_required
 def get_servicio_por_id(id):
     cursor = None
     try:
@@ -51,6 +53,7 @@ def get_servicio_por_id(id):
 
 # POST (Crear)
 @servicios_bp.route('/servicios', methods=['POST'])
+@token_required
 def create_servicio():
     datos = request.get_json()
     campos_requeridos = ['nombre', 'descripcion', 'duracion_turno_min', 'negocio_id']
@@ -85,6 +88,7 @@ def create_servicio():
 
 # PUT (Actualizar)
 @servicios_bp.route('/servicios/<int:id>', methods=['PUT'])
+@token_required
 def update_servicio(id):
     cursor = None
     try:
@@ -121,6 +125,7 @@ def update_servicio(id):
 
 # DELETE
 @servicios_bp.route('/servicios/<int:id>', methods=['DELETE'])
+@token_required
 def delete_servicio(id):
     cursor = None
     try:

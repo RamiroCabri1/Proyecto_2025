@@ -1,4 +1,4 @@
-
+from api.utils import token_required
 from flask import Blueprint, jsonify, request
 from api.models.profesional import Profesional 
 from api.db.db import mysql
@@ -8,6 +8,7 @@ profesionales_bp = Blueprint('profesionales', __name__)
 
 # GET Todos
 @profesionales_bp.route('/profesionales', methods=['GET'])
+@token_required
 def get_profesionales():
     cursor = None
     try:
@@ -29,6 +30,7 @@ def get_profesionales():
 
 # GET por ID
 @profesionales_bp.route('/profesionales/<int:id>', methods=['GET'])
+@token_required
 def get_profesional_por_id(id):
     cursor = None
     try:
@@ -50,6 +52,7 @@ def get_profesional_por_id(id):
 
 # POST (Crear)
 @profesionales_bp.route('/profesionales', methods=['POST'])
+@token_required
 def create_profesional():
     datos = request.get_json()
     campos_requeridos = ['nombre', 'activo', 'negocio_id']
@@ -82,6 +85,7 @@ def create_profesional():
 
 # PUT (Actualizar)
 @profesionales_bp.route('/profesionales/<int:id>', methods=['PUT'])
+@token_required
 def update_profesional(id):
     cursor = None
     try:
@@ -115,7 +119,8 @@ def update_profesional(id):
             cursor.close()
 
 # DELETE
-@profesionales_bp.route('/profesionales/<int:id>', methods=['DELETE']) 
+@profesionales_bp.route('/profesionales/<int:id>', methods=['DELETE'])
+@token_required
 def delete_profesional(id):
     cursor = None
     try:

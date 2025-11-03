@@ -1,4 +1,4 @@
-
+from api.utils import token_required
 from flask import Blueprint, jsonify, request
 from api.models.cliente import Cliente
 from api.db.db import mysql
@@ -8,6 +8,7 @@ clientes_bp = Blueprint('clientes', __name__)
 
 # GET Todos
 @clientes_bp.route('/clientes', methods=['GET'])
+@token_required
 def get_clientes():
     cursor = None
     try:
@@ -29,6 +30,7 @@ def get_clientes():
 
 # GET por ID
 @clientes_bp.route('/clientes/<int:id>', methods=['GET'])
+@token_required
 def get_cliente_por_id(id):
     cursor = None
     try:
@@ -50,6 +52,7 @@ def get_cliente_por_id(id):
 
 # POST (Crear)
 @clientes_bp.route('/clientes', methods=['POST'])
+@token_required
 def create_cliente():
     datos = request.get_json()
     
@@ -92,6 +95,7 @@ def create_cliente():
 
 # PUT (Actualizar)
 @clientes_bp.route('/clientes/<int:id>', methods=['PUT'])
+@token_required
 def update_cliente(id):
     cursor = None
     try:
@@ -133,6 +137,7 @@ def update_cliente(id):
 
 # DELETE
 @clientes_bp.route('/clientes/<int:id>', methods=['DELETE'])
+@token_required
 def delete_cliente(id):
     cursor = None
     try:
