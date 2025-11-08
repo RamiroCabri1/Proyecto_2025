@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/style.css">
+    <title>Turn-e | Clientes </title>
+    <link rel="icon" type="image/png" href="assets/logo2.png">
+</head>
+
+<body>
+
+    <header>
+            <a href="./index.html" class="brand">
+                <img src="./Assets/logo.png" alt="Turn-e Logo" class="logo-img">
+            </a>
+
+        <nav class="header-nav">
+            <ul>
+                <li><a href="./index.html">Inicio</a></li>
+                <li><a href="./clientes-turno.html">Portal clientes</a></li>   
+                <li><a href="./login-profesionales.html">Portal Profesionales</a></li>
+
+            </ul>
+        </nav>
+    </header>
+    </header>
+
+    <main class="turno-container">
+        <h1>Ingrese el código de su turno</h1>
+
+    <form id="form-codigo-turno" novalidate>
+        <div class="form-group">
+            <label for="codigo">Número de código</label>
+            <input
+                type="text"
+                id="codigo"
+                name="codigo"
+                placeholder="Ej: 17145"
+                inputmode="numeric"
+                autocomplete="off"
+                required
+            />
+        </div>
+
+        <button type="submit" class="btn">Ingresar</button>
+
+        <div class="divider" role="separator" aria-hidden="true"></div>
+
+        <p class="note">
+            ¿No tiene código?
+            <a href="./clientes-sacar-turno.html">Sacar turno</a>
+        </p>
+    </form>
+    </main>
+</body>
+</html>

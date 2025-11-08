@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/style.css">
+    <title>Turn-e | Turnos </title>
+    <link rel="icon" type="image/png" href="assets/logo2.png">
+</head>
+
+<body>
+
+    <header>
+            <a href="./index.html" class="brand">
+                <img src="./Assets/logo.png" alt="Turn-e Logo" class="logo-img">
+            </a>
+
+        <nav class="header-nav">
+            <ul>
+                <li><a href="./index.html">Inicio</a></li>
+                <li><a href="./clientes-turno.html">Portal clientes</a></li>   
+                <li><a href="./login-profesionales.html">Portal Profesionales</a></li>
+
+            </ul>
+        </nav>
+    </header>
+
+        <main class="sacar-turno-container">
+            <h1>Sacar turno</h1>
+
+    <form id="form-sacar-turno" novalidate>
+        <div class="form-group">
+            <label for="profesional">Profesional</label>
+            <select id="profesional" name="profesional" required>
+                <option value="" disabled selected>Seleccione un profesional</option>
+                <option value="maria">María Pérez</option>
+                <option value="juan">Juan López</option>
+                <option value="sofia">Sofía Fernández</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="servicio">Servicio</label>
+            <select id="servicio" name="servicio" required>
+                <option value="" disabled selected>Seleccione un servicio</option>
+                <option value="consulta">Consulta</option>
+                <option value="corte">Corte de cabello</option>
+                <option value="color">Coloración</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="fecha">Fecha</label>
+            <input type="date" id="fecha" name="fecha" required />
+        </div>
+
+        <div class="form-group">
+            <label for="hora">Horario</label>
+            <input type="time" id="hora" name="hora" required />
+        </div>
+
+        <button type="submit" class="btn">Confirmar turno</button>
+
+        <p class="note">
+            ¿Ya tiene turno? <a href="./clientes-turno.html">Ingresar código</a>
+        </p>
+    </form>
+    </main>
+</body>
+</html>

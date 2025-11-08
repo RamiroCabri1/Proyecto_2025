@@ -101,7 +101,7 @@ main {
   filter: brightness(1.05);
 }
 
-/* Formulario */
+/* Formulario Profesionales */
 .login-container {
   background: #ffffff;
   border-radius: 10px;
@@ -197,6 +197,250 @@ main {
 .note a:hover {
   text-decoration: underline;
 }
+
+/* Formulario clientes */
+.turno-container {
+  width: 90%;
+  max-width: 520px;
+  margin: 6rem auto;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 22px rgba(0,0,0,.12);
+  padding: 3rem 3.2rem;
+}
+
+.turno-container h1 {
+  text-align: center;
+  font-size: 2.2rem;
+  color: #003049;
+  margin-bottom: 1.6rem;
+  position: relative;
+  padding-bottom: .6rem;
+}
+.turno-container h1::after {
+  content: "";
+  position: absolute;
+  left: 50%; transform: translateX(-50%);
+  bottom: 0;
+  width: 70px; height: 3px;
+  background: #003049; border-radius: 2px;
+}
+
+.form-group { margin: 1.6rem 0 2.2rem; }
+label { display: block; font-weight: 600; color: #003049; margin-bottom: .6rem; }
+
+input[type="text"] {
+  width: 100%;
+  font-size: 1.6rem;
+  padding: 1rem 1.2rem;
+  border: 1px solid #cfcfcf;
+  border-radius: 8px;
+  outline: none;
+  transition: border-color .2s, box-shadow .2s;
+  background: #fff;
+}
+input[type="text"]:focus {
+  border-color: #003049;
+  box-shadow: 0 0 0 3px rgba(0,48,73,.12);
+}
+
+
+.btn {
+  width: 100%;
+  background: #003049;
+  color: #fdf0d5;
+  border: none;
+  border-radius: 28px;
+  padding: 1.1rem 1.6rem;
+  font-size: 1.7rem;
+  cursor: pointer;
+  transition: background .2s, transform .05s;
+}
+.btn:hover { background: #00263d; }
+.btn:active { transform: translateY(1px); }
+
+.divider {
+  height: 1px;
+  background: rgba(0,0,0,.18);
+  margin: 1.8rem 0 1.2rem;
+}
+
+.note { text-align: center; font-size: 1.4rem; color: #444; }
+.note a { color: #669bbc; text-decoration: none; font-weight: 600; }
+.note a:hover { text-decoration: underline; }
+
+/* Detalles de turno - cliente */
+.detalle-turno-container {
+  width: 90%;
+  max-width: 520px;
+  margin: 6rem auto;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 22px rgba(0,0,0,.12);
+  padding: 3rem 3.2rem;
+  text-align: center;
+}
+
+.detalle-turno-container h1 {
+  font-size: 2rem;
+  color: #003049;
+  margin-bottom: 0.8rem;
+}
+
+.codigo-turno {
+  font-size: 3rem;
+  color: #003049;
+  font-weight: 800;
+  margin-bottom: 2rem;
+}
+
+.detalle-card {
+  background: #fdf0d5;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1.8rem;
+  text-align: left;
+  font-size: 1.6rem;
+  line-height: 1.6;
+  margin-bottom: 2.5rem;
+}
+
+.detalle-card p { margin: 0.8rem 0; }
+
+.acciones {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+
+.acciones {
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+  width: 100%;
+}
+
+.acciones .btn {
+  width: 100%;
+  max-width: 100%;
+  border-radius: 30px;
+  font-size: 1.8rem;
+  font-weight: 600;
+  padding: 1.4rem 0;
+  cursor: pointer;
+  border: none;
+  text-align: center;
+  transition: background 0.3s ease, transform 0.05s ease;
+}
+
+.btn.cancelar {
+  background: #c1121f;
+  color: #fff;
+}
+
+.btn.cancelar:hover {
+  background: #9d0e1a;
+}
+
+.btn.volver {
+  background: #003049;
+  color: #fdf0d5;
+  text-decoration: none;
+}
+
+.btn.volver:hover {
+  background: #00263d;
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+/* Sacar turno */
+.sacar-turno-container {
+  width: 90%;
+  max-width: 520px;
+  margin: 6rem auto;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 22px rgba(0,0,0,.12);
+  padding: 3rem 3.2rem;
+}
+
+.sacar-turno-container h1 {
+  text-align: center;
+  font-size: 2.2rem;
+  color: #003049;
+  margin-bottom: 1.6rem;
+  position: relative;
+  padding-bottom: .6rem;
+}
+
+.sacar-turno-container h1::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 0;
+  width: 70px;
+  height: 3px;
+  background: #003049;
+  border-radius: 2px;
+}
+
+/* Inputs y selects */
+.sacar-turno-container select,
+.sacar-turno-container input[type="date"],
+.sacar-turno-container input[type="time"] {
+  width: 100%;
+  font-size: 1.6rem;
+  padding: 1rem 1.2rem;
+  border: 1px solid #cfcfcf;
+  border-radius: 8px;
+  outline: none;
+  background: #fff;
+  transition: border-color .2s, box-shadow .2s;
+}
+
+.sacar-turno-container select:focus,
+.sacar-turno-container input:focus {
+  border-color: #003049;
+  box-shadow: 0 0 0 3px rgba(0,48,73,.12);
+}
+
+.sacar-turno-container .btn {
+  width: 100%;
+  background: #003049;
+  color: #fdf0d5;
+  border: none;
+  border-radius: 28px;
+  padding: 1.2rem;
+  font-size: 1.7rem;
+  cursor: pointer;
+  transition: background .2s, transform .05s;
+  margin-top: 1.5rem;
+}
+
+.sacar-turno-container .btn:hover { background: #00263d; }
+.sacar-turno-container .btn:active { transform: translateY(1px); }
+
+.sacar-turno-container .note {
+  text-align: center;
+  font-size: 1.4rem;
+  margin-top: 1.8rem;
+  color: #444;
+}
+
+.sacar-turno-container .note a {
+  color: #669bbc;
+  text-decoration: none;
+  font-weight: 600;
+}
+.sacar-turno-container .note a:hover {
+  text-decoration: underline;
+}
+
 
 /* Headings */
 h1, h2 {
