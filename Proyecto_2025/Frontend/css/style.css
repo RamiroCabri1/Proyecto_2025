@@ -1,33 +1,220 @@
-/* CSS BASICO */
+/* Reset */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* Type shi */
+html {
+  font-size: 62.5%;
+}
+
+/* Body */
 body {
-  font-family: Arial, sans-serif;
-  font-size: 16px;
+  font-family: "Poppins", sans-serif;
   line-height: 1.5;
-  background-color: #fff;
-  color: #000;
+  font-size: 1.6rem;
+  background-color: #fdf0d5;
+  min-height: 100vh;
 }
 
-/* links */
-a {
+/* Header */
+header {
+  background-color: #003049;
+  color: #ffffff;
+  width: 100%;
+  padding: 1.5rem 3rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-size: 2.4rem;
+  font-weight: bold;
   text-decoration: none;
-  color: inherit;
+  color: #ffffff;
 }
 
-/* Imagenes */
-img {
-  max-width: 100%;
-  height: auto;
+.logo-img {
+  height: 50px;
+  width: auto;
   display: block;
 }
 
-/* Listas */
-ul, ol {
+
+.header-nav ul {
   list-style: none;
+  display: flex;
+  gap: 2rem;
 }
+
+.header-nav a {
+  text-decoration: none;
+  font-size: 1.8rem;
+  color: #ffffff;
+  transition: color 0.3s;
+}
+
+.header-nav a:hover {
+  color: #669bbc;
+}
+
+/* Main */
+main {
+  width: 90%;
+  margin: 5rem auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4rem;
+}
+
+/* Cards */
+.contenedor-tarjetas {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4rem;
+  margin-top: 5rem;
+}
+
+.card {
+  width: 90%;
+  max-width: 1000px;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 48, 73, 0.25);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
+}
+
+.card img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
+
+.card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 20px rgba(0, 48, 73, 0.35);
+  filter: brightness(1.05);
+}
+
+/* Formulario */
+.login-container {
+  background: #ffffff;
+  border-radius: 10px;
+  width: 400px;
+  margin: 6rem auto;
+  padding: 2rem 3rem 3rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.login-container h1 {
+  position: relative;
+  text-align: center;
+  margin-bottom: 1.2rem;
+  color: #003049;
+  font-size: 2.4rem;
+  font-weight: 600;
+  padding-bottom: 0.5rem;
+  border-bottom: none;
+}
+
+.login-container h1::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 60px; /* largo de la línea */
+  height: 3px; /* grosor */
+  background-color: #003049; /* color de acento */
+  border-radius: 2px;
+}
+
+.login-container .form-group:first-of-type {
+  margin-top: 0.5rem;
+}
+
+
+.form-group {
+  position: relative;
+  margin: 1.8rem 0;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #003049;
+  font-weight: 600;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  font-size: 1.6rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.form-group input:focus {
+  border-color: #003049;
+}
+
+.btn {
+  width: 100%;
+  background: #003049;
+  color: #fdf0d5;
+  border: none;
+  border-radius: 25px;
+  font-size: 1.8rem;
+  padding: 1rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.btn:hover {
+  background: #00263d;
+}
+
+.note {
+  text-align: center;
+  font-size: 1.4rem;
+  margin-top: 1.5rem;
+  color: #101010;
+}
+
+.note a {
+  color: #669bbc;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.note a:hover {
+  text-decoration: underline;
+}
+
+/* Headings */
+h1, h2 {
+  color: #101010;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+/* Media */
+@media (max-width: 768px) {
+  header {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .card {
+    width: 95%;
+  }
+}
+
+
