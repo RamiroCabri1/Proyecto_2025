@@ -27,46 +27,45 @@
         </nav>
     </header>
 
-        <main class="sacar-turno-container">
-            <h1>Sacar turno</h1>
+    <main>
+        <div class="turno-container">
+            <h1>Seleccionar turno</h1>
 
-    <form id="form-sacar-turno" novalidate>
-        <div class="form-group">
-            <label for="profesional">Profesional</label>
-            <select id="profesional" name="profesional" required>
-                <option value="" disabled selected>Seleccione un profesional</option>
-                <option value="maria">María Pérez</option>
-                <option value="juan">Juan López</option>
-                <option value="sofia">Sofía Fernández</option>
-            </select>
+            <form>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="profesional">Profesional</label>
+                        <select id="profesional">
+                            <option value="">Seleccionar profesional</option>
+                            <option value="1">María Pérez - Colorista</option>
+                            <option value="2">Juan López - Estilista</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="servicio">Servicio</label>
+                        <select id="servicio">
+                            <option value="">Seleccionar servicio</option>
+                            <option value="corte">Corte</option>
+                            <option value="color">Color</option>
+                        </select>
+                    </div>
+                </div>
+
+                <h2>Horarios disponibles</h2>
+                <div class="horarios-grid">
+                    <button type="button" class="horario">09:00</button>
+                    <button type="button" class="horario">09:30</button>
+                    <button type="button" class="horario">10:00</button>
+                    <button type="button" class="horario">10:30</button>
+                    <button type="button" class="horario">11:00</button>
+                </div>
+
+                <button type="submit" class="btn reservar">Reservar turno</button>
+            </form>
         </div>
-
-        <div class="form-group">
-            <label for="servicio">Servicio</label>
-            <select id="servicio" name="servicio" required>
-                <option value="" disabled selected>Seleccione un servicio</option>
-                <option value="consulta">Consulta</option>
-                <option value="corte">Corte de cabello</option>
-                <option value="color">Coloración</option>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label for="fecha">Fecha</label>
-            <input type="date" id="fecha" name="fecha" required />
-        </div>
-
-        <div class="form-group">
-            <label for="hora">Horario</label>
-            <input type="time" id="hora" name="hora" required />
-        </div>
-
-        <button type="submit" class="btn">Confirmar turno</button>
-
-        <p class="note">
-            ¿Ya tiene turno? <a href="./clientes-turno.html">Ingresar código</a>
-        </p>
-    </form>
     </main>
+
+
 </body>
 </html>
