@@ -28,32 +28,28 @@
     </header>
     </header>
 
-    <main class="turno-container">
-        <h1>Ingrese el código de su turno</h1>
+<main>
+    <div class="turno-container">
+        <h1>Consultar tu turno</h1>
 
-    <form id="form-codigo-turno" novalidate>
-        <div class="form-group">
-            <label for="codigo">Número de código</label>
-            <input
-                type="text"
-                id="codigo"
-                name="codigo"
-                placeholder="Ej: 17145"
-                inputmode="numeric"
-                autocomplete="off"
-                required
-            />
-        </div>
+        <form action="detalle-turno.html" method="get">
+            <div class="form-group">
+                <label for="dni">Ingresá tu DNI</label>
+                <input type="text" id="dni" name="dni" placeholder="Ej: 40987564" required>
+                <div id="mensaje-error" class="mensaje-error"></div> /*mensaje de error si no encuentra dni en base */
+            </div>
 
-        <button type="submit" class="btn">Ingresar</button>
+            <button type="submit" class="btn reservar">Ver mis turnos</button>
+        </form>
 
-        <div class="divider" role="separator" aria-hidden="true"></div>
+        <div class="divider"></div>
 
         <p class="note">
-            ¿No tiene código?
-            <a href="./clientes-sacar-turno.html">Sacar turno</a>
+            ¿Todavía no tenés turno?  
+            <a href="./sacar-turno.html">Reservá uno acá</a>
         </p>
-    </form>
-    </main>
+    </div>
+</main>
+
 </body>
 </html>

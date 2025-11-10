@@ -128,9 +128,9 @@ main {
   left: 50%;
   bottom: 0;
   transform: translateX(-50%);
-  width: 60px; /* largo de la línea */
-  height: 3px; /* grosor */
-  background-color: #003049; /* color de acento */
+  width: 60px;
+  height: 3px; 
+  background-color: #003049; 
   border-radius: 2px;
 }
 
@@ -180,6 +180,19 @@ main {
 .btn:hover {
   background: #00263d;
 }
+
+/*en caso de que los datos esten mal */
+.error-msg {
+  color: #c1121f;
+  background-color: #fdf0d5;
+  border-left: 4px solid #c1121f;
+  padding: 1rem;
+  border-radius: 6px;
+  margin-top: 1rem;
+  font-size: 1.4rem;
+  text-align: center;
+}
+
 
 .note {
   text-align: center;
@@ -268,6 +281,17 @@ input[type="text"]:focus {
 .note { text-align: center; font-size: 1.4rem; color: #444; }
 .note a { color: #669bbc; text-decoration: none; font-weight: 600; }
 .note a:hover { text-decoration: underline; }
+
+/*si no encuentra dni */
+
+.mensaje-error {
+  color: #c1121f;
+  font-size: 1.4rem;
+  text-align: center;
+  margin-top: 1rem;
+  display: none;
+}
+
 
 /* Detalles de turno - cliente */
 .detalle-turno-container {
