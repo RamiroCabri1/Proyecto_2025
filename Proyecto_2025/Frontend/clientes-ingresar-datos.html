@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/style.css">
+    <title>Turn-e | Turnos </title>
+    <link rel="icon" type="image/png" href="assets/logo2.png">
+</head>
+
+<body>
+
+    <header>
+            <a href="./index.html" class="brand">
+                <img src="./Assets/logo.png" alt="Turn-e Logo" class="logo-img">
+            </a>
+        <nav class="header-nav">
+            <ul>
+                <li><a href="./index.html">Inicio</a></li>
+                <li><a href="./clientes-turno.html">Portal clientes</a></li>   
+                <li><a href="./login-profesionales.html">Portal Profesionales</a></li>
+
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="turno-container">
+            <h1>Ingresar datos personales <span class="paso">(Paso 2 de 2)</span></h1>
+
+            <form>
+                <div class="form-group">
+                    <label for="nombre">Nombre completo</label>
+                    <input type="text" id="nombre" name="nombre" placeholder="Ej: Ana María López" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="dni">DNI</label>
+                    <input type="text" id="dni" name="dni" placeholder="Ej: 40987564" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="telefono">Teléfono</label>
+                    <input type="text" id="telefono" name="telefono" placeholder="Ej: 291-4567890" required>
+                </div>
+
+                <button type="submit" class="btn reservar">Confirmar turno</button>
+            </form>
+        </div>
+    </main>
+
+
+
+</body>
+</html>
