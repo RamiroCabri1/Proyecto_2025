@@ -1,0 +1,86 @@
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Turn-e | Dashboard profesionales</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="./Assets/logo2.png">
+
+    <link rel="stylesheet" href="./css/dashboard.css">
+</head>
+
+<body>
+
+    <header class="topbar">
+        <div class="logo-header">
+            <img src="./Assets/logo.png" alt="Logo Turn-e" />
+        </div>
+
+        <div class="top-links">
+            <a href="#" class="perfil">Perfil</a>
+            <a href="./index.html" class="logout-btn" title="Cerrar sesión">
+                <img src="./Assets/logout.svg" alt="Cerrar sesión">
+            </a>
+        </div>
+    </header>
+
+    <div class="dashboard-container">
+
+        <aside class="sidebar">
+            <h3>Panel</h3>
+            <nav>
+                <ul>
+                    <li><a href="./dashboard-clientes.html"> Clientes</a></li>
+                    <li><a href="./dashboard-servicios.html"> Servicios</a></li>
+                    <li><a href="./dashboard-empleados.html"> Empleados</a></li>
+                    <li class=""><a href="./dashboard-ajustes.html"> Ajustes</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <h1>Ajustes del negocio</h1>
+
+            <div class="form-ajustes">
+                <form>
+                    <div class="form-group">
+                        <label for="nombre">Nombre del negocio</label>
+                        <input type="text" id="nombre" placeholder="Ej. Estudio Armonía">
+                    </div>
+
+                <div class="form-group">
+                    <label for="telefono">Teléfono de contacto</label>
+                    <input type="text" id="telefono" placeholder="Ej. +54 9 291 123 4567">
+                </div>
+
+                <div class="form-group">
+                    <label for="direccion">Dirección</label>
+                    <input type="text" id="direccion" placeholder="Ej. Las Heras 350, Bahía Blanca">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="hora-apertura">Hora de apertura</label>
+                        <input type="time" id="hora-apertura">
+                </div>
+
+                <div class="form-group">
+                    <label for="hora-cierre">Hora de cierre</label>
+                    <input type="time" id="hora-cierre">
+                </div>
+            </div>
+                    <button class="btn guardar">Guardar cambios</button>
+                </form>
+            </div>
+        </main>
+
+    </div>   
+
+</body>
+</html>
+
+/* organizar identacion que quedo RARI */

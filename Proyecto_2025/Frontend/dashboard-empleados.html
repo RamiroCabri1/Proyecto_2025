@@ -1,0 +1,89 @@
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Turn-e | Dashboard profesionales</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="./Assets/logo2.png">
+
+    <link rel="stylesheet" href="./css/dashboard.css">
+</head>
+
+<body>
+
+    <header class="topbar">
+        <div class="logo-header">
+            <img src="./Assets/logo.png" alt="Logo Turn-e" />
+        </div>
+
+        <div class="top-links">
+            <a href="#" class="perfil">Perfil</a>
+            <a href="./index.html" class="logout-btn" title="Cerrar sesión">
+                <img src="./Assets/logout.svg" alt="Cerrar sesión">
+            </a>
+        </div>
+    </header>
+
+    <div class="dashboard-container">
+
+        <aside class="sidebar">
+            <h3>Panel</h3>
+            <nav>
+                <ul>
+                    <li><a href="./dashboard-clientes.html"> Clientes</a></li>
+                    <li><a href="./dashboard-servicios.html"> Servicios</a></li>
+                    <li class="active"><a href="./dashboard-empleados.html"> Empleados</a></li>
+                    <li><a href="./dashboard-ajustes.html"> Ajustes</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <h1>Empleados</h1>
+
+            <div class="acciones-superiores">
+                <button class="btn">+ Agregar empleado</button>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Puesto</th>
+                            <th>Email</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Laura Gómez</td>
+                            <td>Maquilladora</td>
+                            <td>laura@empresa.com</td>
+                            <td>
+                                <a href="#" class="accion-editar">Editar</a> |
+                                <a href="#" class="accion-cancelar">Eliminar</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Marcos Díaz</td>
+                            <td>Masajista</td>
+                            <td>marcos@empresa.com</td>
+                            <td>
+                                <a href="#" class="accion-editar">Editar</a> |
+                                <a href="#" class="accion-cancelar">Eliminar</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+
+    </div> 
+
+</body>
+</html>

@@ -1,4 +1,3 @@
-/* ======= RESET Y BASE ======= */
 * {
   margin: 0;
   padding: 0;
@@ -18,7 +17,6 @@ body {
   min-height: 100vh;
 }
 
-/* ======= HEADER (TOPBAR) ======= */
 .topbar {
   background: #003049;
   color: #fff;
@@ -64,13 +62,11 @@ body {
   opacity: 0.8;
 }
 
-/* ======= CONTENEDOR PRINCIPAL ======= */
 .dashboard-container {
   display: flex;
   min-height: calc(100vh - 70px); /* ocupa todo menos el header */
 }
 
-/* ======= SIDEBAR ======= */
 .sidebar {
   background: #4b4b4b;
   width: 220px;
@@ -118,7 +114,6 @@ body {
   color: #fff;
 }
 
-/* ======= CONTENIDO PRINCIPAL ======= */
 .main-content {
   flex: 1;
   padding: 3rem 4rem;
@@ -132,7 +127,6 @@ body {
   margin-bottom: 2rem;
 }
 
-/* ======= BOTONES Y TABLAS ======= */
 .btn {
   background: #003049;
   color: #fdf0d5;
@@ -207,3 +201,110 @@ td a:hover {
     padding: 2rem;
   }
 }
+
+.acciones-superiores {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1.5rem;
+}
+
+.acciones-superiores .btn {
+  background: #003049;
+  color: #fdf0d5;
+  border: none;
+  border-radius: 25px;
+  font-size: 1.6rem;
+  padding: 1rem 2rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.acciones-superiores .btn:hover {
+  background: #00263d;
+}
+
+.accion-editar {
+  color: #003049;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.accion-editar:hover {
+  text-decoration: underline;
+}
+
+.accion-cancelar {
+  color: #c1121f;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.accion-cancelar:hover {
+  text-decoration: underline;
+}
+
+
+/* ======= FORMULARIO DE AJUSTES ======= */
+.form-ajustes {
+  background: #fdf0d5;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  padding: 3rem 3.5rem;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.form-ajustes .form-group {
+  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-ajustes label {
+  font-weight: 600;
+  color: #003049;
+  margin-bottom: 0.8rem;
+}
+
+.form-ajustes input,
+.form-ajustes textarea {
+  font-size: 1.6rem;
+  padding: 1rem 1.2rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.form-ajustes input:focus,
+.form-ajustes textarea:focus {
+  border-color: #003049;
+  box-shadow: 0 0 0 3px rgba(0,48,73,0.1);
+}
+
+.form-row {
+  display: flex;
+  gap: 2rem;
+}
+
+.form-row .form-group {
+  flex: 1;
+}
+
+.btn.guardar {
+  width: 100%;
+  background: #003049;
+  color: #fdf0d5;
+  border: none;
+  border-radius: 25px;
+  font-size: 1.8rem;
+  padding: 1.2rem;
+  cursor: pointer;
+  transition: background 0.3s;
+  margin-top: 2rem;
+}
+
+.btn.guardar:hover {
+  background: #00263d;
+}
+ /* ORGANIZAR ESTO QUE QUEDO DESPELOTADO Y MAL IDENTADO*/
