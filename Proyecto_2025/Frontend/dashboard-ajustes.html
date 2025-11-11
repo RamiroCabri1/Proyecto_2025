@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 
@@ -37,7 +36,7 @@
                     <li><a href="./dashboard-clientes.html"> Clientes</a></li>
                     <li><a href="./dashboard-servicios.html"> Servicios</a></li>
                     <li><a href="./dashboard-empleados.html"> Empleados</a></li>
-                    <li class=""><a href="./dashboard-ajustes.html"> Ajustes</a></li>
+                    <li class="active"><a href="./dashboard-ajustes.html"> Ajustes</a></li>
                 </ul>
             </nav>
         </aside>
@@ -46,35 +45,37 @@
             <h1>Ajustes del negocio</h1>
 
             <div class="form-ajustes">
-                <form>
+                <form id="form-ajustes" novalidate>
                     <div class="form-group">
-                        <label for="nombre">Nombre del negocio</label>
-                        <input type="text" id="nombre" placeholder="Ej. Estudio Armonía">
-                    </div>
-
-                <div class="form-group">
-                    <label for="telefono">Teléfono de contacto</label>
-                    <input type="text" id="telefono" placeholder="Ej. +54 9 291 123 4567">
-                </div>
-
-                <div class="form-group">
-                    <label for="direccion">Dirección</label>
-                    <input type="text" id="direccion" placeholder="Ej. Las Heras 350, Bahía Blanca">
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="hora-apertura">Hora de apertura</label>
-                        <input type="time" id="hora-apertura">
-                </div>
-
-                <div class="form-group">
-                    <label for="hora-cierre">Hora de cierre</label>
-                    <input type="time" id="hora-cierre">
-                </div>
+                        <label for="nombre-negocio">Nombre del negocio</label>
+                        <input type="text" id="nombre-negocio" name="nombre" placeholder="Ej. Estudio Armonía">
             </div>
-                    <button class="btn guardar">Guardar cambios</button>
-                </form>
+
+            <div class="form-group">
+                <label for="telefono-negocio">Teléfono de contacto</label>
+                <input type="text" id="telefono-negocio" name="telefono" placeholder="Ej. +54 9 291 123 4567">
+            </div>
+
+            <div class="form-group">
+                <label for="direccion-negocio">Dirección</label>
+                <input type="text" id="direccion-negocio" name="direccion" placeholder="Ej. Las Heras 350, Bahía Blanca">
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="hora-apertura">Hora de apertura</label>
+                    <input type="time" id="hora-apertura" name="hora_apertura">
+                </div>
+
+            <div class="form-group">
+                <label for="hora-cierre">Hora de cierre</label>
+                <input type="time" id="hora-cierre" name="hora_cierre">
+            </div>
+        </div>
+
+        <button type="submit" class="btn guardar">Guardar cambios</button>
+    </form>
+
             </div>
         </main>
 
@@ -83,4 +84,3 @@
 </body>
 </html>
 
-/* organizar identacion que quedo RARI */

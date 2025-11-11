@@ -33,8 +33,8 @@
             <h3>Panel</h3>
             <nav>
                 <ul>
-                    <li class="active"><a href="./dashboard-clientes.html"> Clientes</a></li>
-                    <li><a href="./dashboard-servicios.html"> Servicios</a></li>
+                    <li><a href="./dashboard-clientes.html"> Clientes</a></li>
+                    <li class="active"><a href="./dashboard-servicios.html"> Servicios</a></li>
                     <li><a href="./dashboard-empleados.html"> Empleados</a></li>
                     <li><a href="./dashboard-ajustes.html"> Ajustes</a></li>
                 </ul>
@@ -45,11 +45,11 @@
             <h1>Servicios</h1>
 
             <div class="acciones-superiores">
-                <button class="btn">+ Agregar servicio</button>
+                <button id="btn-agregar-servicio" class="btn">+ Agregar servicio</button>
             </div>
 
             <div class="table-container">
-                <table>
+                <table id="tabla-servicios">
                     <thead>
                         <tr>
                             <th>Nombre</th>
@@ -58,7 +58,7 @@
                             <th>Acción</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="servicios-body">
                         <tr>
                             <td>Masaje relajante</td>
                             <td>45 min</td>
@@ -78,10 +78,55 @@
 
     </div>
 
-</body>
-</html>
 
+<!-- Modal para agregar servicio/pruebitaaa, no definitivo-->
+<div id="modal-servicio" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" id="cerrar-modal">&times;</span>
+        <h2>Agregar nuevo servicio</h2>
+
+        <form id="form-servicio">
+            <div class="form-group">
+                <label for="nombre-servicio">Nombre</label>
+                <input 
+                    type="text" 
+                    id="nombre-servicio" 
+                    name="nombre" 
+                    placeholder="Ej: Masaje relajante" 
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="descripcion-servicio">Descripción</label>
+                    <textarea 
+                        id="descripcion-servicio" 
+                        name="descripcion" 
+                        placeholder="Ej: Sesión de masaje para aliviar el estrés"
+                        rows="3" 
+                        required
+                ></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="duracion-servicio">Duración (minutos)</label>
+                <input 
+                    type="number" 
+                    id="duracion-servicio" 
+                    name="duracion" 
+                    placeholder="Ej: 45"
+                    min="10" 
+                    max="180" 
+                    required
+                >
+            </div>
+
+            <button type="submit" class="btn">Guardar servicio</button>
+        </form>
     </div>
+</div>
+
 
 </body>
 </html>
+

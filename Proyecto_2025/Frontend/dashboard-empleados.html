@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 
@@ -46,11 +45,11 @@
             <h1>Empleados</h1>
 
             <div class="acciones-superiores">
-                <button class="btn">+ Agregar empleado</button>
+                <button id="btn-agregar-empleado" class="btn">+ Agregar empleado</button>
             </div>
 
             <div class="table-container">
-                <table>
+                <table id="tabla-empleados">
                     <thead>
                         <tr>
                             <th>Nombre</th>
@@ -59,7 +58,7 @@
                             <th>Acción</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="">
                         <tr>
                             <td>Laura Gómez</td>
                             <td>Maquilladora</td>
@@ -84,6 +83,46 @@
         </main>
 
     </div> 
+
+<!-- Modal de prueba para agregar y editar empleados -->
+<div id="modal-empleado" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" id="cerrar-modal-empleado">&times;</span>
+        <h2>Agregar nuevo empleado</h2>
+
+        <form id="form-empleado">
+            <div class="form-group">
+                <label for="nombre-empleado">Nombre completo</label>
+                <input type="text" id="nombre-empleado" name="nombre" placeholder="Ej: Laura Gómez" required>
+            </div>
+
+            <div class="form-group">
+                <label for="puesto-empleado">Puesto</label>
+                <input type="text" id="puesto-empleado" name="puesto" placeholder="Ej: Masajista" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email-empleado">Correo electrónico</label>
+                <input type="email" id="email-empleado" name="email" placeholder="Ej: laura@empresa.com" required>
+            </div>
+
+            <button type="submit" class="btn">Guardar empleado</button>
+        </form>
+    </div>
+</div>
+
+<!-- Modal de confirmación para eliminar empleadooo -->
+<div id="modal-confirmacion" class="modal">
+    <div class="modal-content modal-confirm">
+        <h2>¿Eliminar este registro?</h2>
+        <p>Esta acción no se puede deshacer. ¿Estás seguro de que querés continuar?</p>
+
+        <div class="modal-actions">
+            <button class="btn danger" id="confirmar-eliminar">Eliminar</button>
+            <button class="btn" id="cancelar-eliminar">Cancelar</button>
+        </div>
+    </div>
+</div>
 
 </body>
 </html>

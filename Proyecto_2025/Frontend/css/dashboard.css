@@ -67,6 +67,8 @@ body {
   min-height: calc(100vh - 70px); /* ocupa todo menos el header */
 }
 
+/*Sidebar*/
+
 .sidebar {
   background: #4b4b4b;
   width: 220px;
@@ -113,6 +115,20 @@ body {
   background: #003049;
   color: #fff;
 }
+
+/* Para sacar subrayado y otros detalles*/
+.sidebar ul li a {
+  text-decoration: none;   
+  color: inherit;           
+  display: block;         
+  width: 100%;
+  height: 100%;
+}
+
+.sidebar ul li a:hover {
+  text-decoration: none; 
+}
+
 
 .main-content {
   flex: 1;
@@ -185,7 +201,7 @@ td a:hover {
   text-decoration: underline;
 }
 
-/* ======= RESPONSIVE ======= */
+/* responsive */
 @media (max-width: 768px) {
   .dashboard-container {
     flex-direction: column;
@@ -244,7 +260,7 @@ td a:hover {
 }
 
 
-/* ======= FORMULARIO DE AJUSTES ======= */
+/* Ajustes */
 .form-ajustes {
   background: #fdf0d5;
   border-radius: 12px;
@@ -307,4 +323,137 @@ td a:hover {
 .btn.guardar:hover {
   background: #00263d;
 }
- /* ORGANIZAR ESTO QUE QUEDO DESPELOTADO Y MAL IDENTADO*/
+
+@media (max-width: 600px) {
+  .form-row {
+    flex-direction: column;
+  }
+}
+
+/* Modal DE PRUEBAAAA, por si no quedo claro que era una prueba (?) */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.4);
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 2.5rem 3rem;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  position: relative;
+}
+
+.modal-content h2 {
+  color: #003049;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.close-btn {
+  position: absolute;
+  right: 1.5rem;
+  top: 1rem;
+  font-size: 2.4rem;
+  color: #999;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.close-btn:hover {
+  color: #003049;
+}
+
+.modal .form-group {
+  margin-bottom: 1.8rem;
+}
+
+.modal .form-group label {
+  display: block;
+  color: #003049;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.modal .form-group input,
+.modal .form-group textarea {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  font-size: 1.6rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.modal .form-group input:focus,
+.modal .form-group textarea:focus {
+  border-color: #003049;
+}
+
+.modal .btn {
+  width: 100%;
+  background: #003049;
+  color: #fdf0d5;
+  border: none;
+  border-radius: 25px;
+  font-size: 1.8rem;
+  padding: 1rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.modal .btn:hover {
+  background: #00263d;
+}
+
+/* Modal de confirmacion */
+.modal-confirm {
+  text-align: center;
+  padding: 3rem 2.5rem;
+}
+
+.modal-confirm h2 {
+  color: #003049;
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.modal-confirm p {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 2.5rem;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.modal-actions .btn {
+  width: 40%;
+  padding: 1rem 0;
+  border-radius: 25px;
+  font-size: 1.6rem;
+  font-weight: 600;
+}
+
+.modal-actions .btn.danger {
+  background: #c1121f;
+  color: #fff;
+}
+
+.modal-actions .btn.danger:hover {
+  background: #9d0e1a;
+}

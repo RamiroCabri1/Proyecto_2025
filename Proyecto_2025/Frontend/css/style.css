@@ -448,6 +448,20 @@ select:focus {
   color: #fdf0d5;
 }
 
+.horario.agotado {
+  background: #ddd;
+  color: #777;
+  border-color: #ccc;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.horario.agotado:hover {
+  background: #ddd;
+  color: #777;
+}
+
+
 .btn.reservar {
   width: 100%;
   background: #003049;
@@ -514,7 +528,6 @@ select:focus {
 .sacar-turno-container .note a:hover {
   text-decoration: underline;
 }
-
 
 /* Headings */
 h1, h2 {

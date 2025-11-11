@@ -34,8 +34,8 @@
             <h3>Panel</h3>
             <nav>
                 <ul>
-                    <li><a href="./dashboard-clientes.html"> Clientes</a></li>
-                    <li class="active"><a href="./dashboard-servicios.html"> Servicios</a></li>
+                    <li class="active"><a href="./dashboard-clientes.html"> Clientes</a></li>
+                    <li><a href="./dashboard-servicios.html"> Servicios</a></li>
                     <li><a href="./dashboard-empleados.html"> Empleados</a></li>
                     <li><a href="./dashboard-ajustes.html"> Ajustes</a></li>
                 </ul>
@@ -46,7 +46,7 @@
             <h1>Clientes</h1>
 
             <div class="table-container">
-                <table>
+                <table id = "tabla-clientes">
                     <thead>
                         <tr>
                             <th>Nombre</th>
@@ -56,20 +56,20 @@
                             <th>Acción</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="clientes-body">
                         <tr>
                             <td>Ana María</td>
                             <td>ana@mail.com</td>
                             <td>Masaje</td>
                             <td>10:30</td>
-                            <td><a href="#" class="accion-cancelar">Cancelar</a></td>
+                            <td><button class="btn-cancelar" data-id="1">Cancelar</button></td>
                         </tr>
                         <tr>
                             <td>Juan Pérez</td>
                             <td>juan@mail.com</td>
                             <td>Lifting</td>
                             <td>11:00</td>
-                            <td><a href="#" class="accion-cancelar">Cancelar</a></td>
+                            <td><button class="btn-cancelar" data-id="1">Cancelar</button></td>
                         </tr>
                     </tbody>
                 </table>
