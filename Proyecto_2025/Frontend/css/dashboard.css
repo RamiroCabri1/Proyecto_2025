@@ -324,10 +324,25 @@ td a:hover {
   background: #00263d;
 }
 
-@media (max-width: 600px) {
-  .form-row {
-    flex-direction: column;
-  }
+/* Esta seccion para el boton de cancelar servicios que quedo raro */
+
+.btn-cancelar {
+  background: none;
+  color: #c1121f;
+  border: none;
+  font-weight: 600;
+  font-family: "Poppins", sans-serif;
+  font-size: 1.5rem;
+  line-height: 1.5;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.btn-cancelar:hover {
+  color: #9d0e1a;
+  text-decoration: underline;
 }
 
 /* Modal DE PRUEBAAAA, por si no quedo claro que era una prueba (?) */
