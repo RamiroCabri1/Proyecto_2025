@@ -42,6 +42,8 @@
         </aside>
 
         <main class="main-content">
+            <input type="hidden" id="negocio_id" />
+
             <h1>Empleados</h1>
 
             <div class="acciones-superiores">
@@ -55,14 +57,18 @@
                             <th>Nombre</th>
                             <th>Puesto</th>
                             <th>Email</th>
+                            <th>Activo</th>
                             <th>Acción</th>
                         </tr>
                     </thead>
+
                     <tbody id="">
                         <tr>
                             <td>Laura Gómez</td>
                             <td>Maquilladora</td>
                             <td>laura@empresa.com</td>
+                            <td>Sí</td>
+
                             <td>
                                 <a href="#" class="accion-editar">Editar</a> |
                                 <a href="#" class="accion-cancelar">Eliminar</a>
@@ -72,6 +78,8 @@
                             <td>Marcos Díaz</td>
                             <td>Masajista</td>
                             <td>marcos@empresa.com</td>
+                            <td>Sí</td>
+
                             <td>
                                 <a href="#" class="accion-editar">Editar</a> |
                                 <a href="#" class="accion-cancelar">Eliminar</a>
@@ -94,6 +102,7 @@
             <div class="form-group">
                 <label for="nombre-empleado">Nombre completo</label>
                 <input type="text" id="nombre-empleado" name="nombre" placeholder="Ej: Laura Gómez" required>
+                <input type="hidden" id="negocio-id-empleado" name="negocio_id">
             </div>
 
             <div class="form-group">
@@ -106,6 +115,14 @@
                 <input type="email" id="email-empleado" name="email" placeholder="Ej: laura@empresa.com" required>
             </div>
 
+            <div class="form-group">
+                <label for="activo-empleado">¿Activo?</label>
+                <select id="activo-empleado" name="activo">
+                        <option value="true">Sí</option>
+                        <option value="false">No</option>
+                </select>
+</div>
+            <input type="hidden" id="negocio-id-empleado" name="negocio_id">
             <button type="submit" class="btn">Guardar empleado</button>
         </form>
     </div>

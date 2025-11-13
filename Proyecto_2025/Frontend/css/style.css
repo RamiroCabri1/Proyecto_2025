@@ -139,11 +139,6 @@ main {
 }
 
 
-.form-group {
-  position: relative;
-  margin: 1.8rem 0;
-}
-
 .form-group label {
   display: block;
   margin-bottom: 0.5rem;
@@ -243,20 +238,6 @@ main {
 .form-group { margin: 1.6rem 0 2.2rem; }
 label { display: block; font-weight: 600; color: #003049; margin-bottom: .6rem; }
 
-input[type="text"] {
-  width: 100%;
-  font-size: 1.6rem;
-  padding: 1rem 1.2rem;
-  border: 1px solid #cfcfcf;
-  border-radius: 8px;
-  outline: none;
-  transition: border-color .2s, box-shadow .2s;
-  background: #fff;
-}
-input[type="text"]:focus {
-  border-color: #003049;
-  box-shadow: 0 0 0 3px rgba(0,48,73,.12);
-}
 
 
 .btn {
@@ -331,6 +312,12 @@ input[type="text"]:focus {
 
 .detalle-card p { margin: 0.8rem 0; }
 
+#estado-turno {
+  font-weight: 700;
+  color: #003049;
+}
+
+
 .acciones {
   display: flex;
   flex-direction: column;
@@ -381,6 +368,29 @@ input[type="text"]:focus {
   transform: translateY(1px);
 }
 
+input[type="text"] {
+  width: 100%;
+  font-size: 1.6rem;
+  padding: 1rem 1.2rem;
+  border: 1px solid #cfcfcf;
+  border-radius: 8px;
+  outline: none;
+  transition: border-color .2s, box-shadow .2s;
+  background: #fff;
+}
+
+input[type="email"] {
+  width: 100%;
+  font-size: 1.6rem;
+  padding: 1rem 1.2rem;
+  border: 1px solid #cfcfcf;
+  border-radius: 8px;
+  outline: none;
+  transition: border-color .2s, box-shadow .2s;
+  background: #fff;
+}
+
+
 /* Sacar turno */
 
 .turno-container {
@@ -424,6 +434,11 @@ select {
 select:focus {
   border-color: #003049;
 }
+
+select option.inactivo {
+  color: #999;
+}
+
 
 .horarios-grid {
   display: grid;
@@ -528,6 +543,17 @@ select:focus {
 .sacar-turno-container .note a:hover {
   text-decoration: underline;
 }
+
+.placeholder-horarios {
+  text-align: center;
+  color: #555;
+  font-size: 1.5rem;
+  padding: 1.2rem 0;
+  background: rgba(0, 0, 0, 0.03);
+  border-radius: 8px;
+  grid-column: 1 / -1;
+}
+
 
 /* Headings */
 h1, h2 {

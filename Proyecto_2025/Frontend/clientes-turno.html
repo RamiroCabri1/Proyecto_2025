@@ -26,7 +26,6 @@
             </ul>
         </nav>
     </header>
-    </header>
 
 <main>
     <div class="turno-container">
@@ -34,22 +33,31 @@
 
         <form action="detalle-turno.html" method="get">
             <div class="form-group">
-                <label for="dni">Ingresá tu DNI</label>
-                <input type="text" id="dni" name="dni" placeholder="Ej: 40987564" required>
+                <label for="codigo">Código de turno</label>
+                <input 
+                    type="text" 
+                    id="codigo" 
+                    name="codigo" 
+                    placeholder="Ej: TUR-000123" 
+                    required
+                >
                 <div id="mensaje-error" class="mensaje-error"></div>
             </div>
 
-            <button type="submit" class="btn reservar">Ver mis turnos</button>
+            <button type="submit" class="btn reservar">Ver turno</button>
         </form>
 
         <div class="divider"></div>
 
         <p class="note">
             ¿Todavía no tenés turno?  
-            <a href="./sacar-turno.html">Reservá uno acá</a>
+            <a href="./clientes-sacar-turno.html">Reservá uno acá</a>
         </p>
     </div>
 </main>
+
+</body>
+</html>
 
 </body>
 </html>

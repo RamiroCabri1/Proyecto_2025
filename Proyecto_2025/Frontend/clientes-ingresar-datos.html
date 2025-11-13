@@ -34,10 +34,17 @@
                 Estás reservando con <strong>María Pérez</strong> para <strong>Color</strong> el día <strong>12/11 a las 10:00</strong>.
             </p>
 
-            <form id = "form-datos-turno">
-                <div class="form-group">
-                    <label for="nombre">Nombre completo</label>
-                    <input type="text" id="nombre" name="nombre" placeholder="Ej: Ana María López" required>
+            <form id="form-datos-turno">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nombre">Nombre</label>
+                        <input type="text" id="nombre" name="nombre" placeholder="Ej: Ana María" required>
+                    </div>
+
+                    <div class="form-group">
+                    <label for="apellido">Apellido</label>
+                    <input type="text" id="apellido" name="apellido" placeholder="Ej: López" required>
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -50,6 +57,11 @@
                     <input type="text" id="telefono" name="telefono" placeholder="Ej: 291-4567890" required>
                 </div>
 
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="Ej: usuario@mail.com" required>
+                </div>
+
                 <input type="hidden" id="profesional_id" name="profesional_id">
                 <input type="hidden" id="servicio_id" name="servicio_id">
                 <input type="hidden" id="horario" name="horario">
@@ -57,6 +69,7 @@
 
                 <button type="submit" class="btn reservar">Confirmar turno</button>
             </form>
+
         </div>
     </main>
 

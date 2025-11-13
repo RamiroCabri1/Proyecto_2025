@@ -29,14 +29,20 @@
 
 <main class="detalle-turno-container">
     <h1>Detalle de tu turno</h1>
-    <p>Estos son los datos del turno asociado al DNI ingresado.</p>
+    <p>Su número de código es: </p>
+
+    <p class="codigo-turno" id="codigo-turno"> TUR-000123</p>
+
+    <p>Estos son los datos del turno reservado.</p>
 
     <div class="detalle-card">
-        <p><strong>Nombre:</strong> Ana María López</p>
-        <p><strong>Profesional:</strong> Juan Pérez</p>
-        <p><strong>Servicio:</strong> Corte y peinado</p>
-        <p><strong>Fecha:</strong> 15/11/2025</p>
-        <p><strong>Horario:</strong> 10:30 hs</p>
+        <p><strong>Nombre:</strong> <span id="cliente-nombre">—</span></p>
+        <p><strong>Profesional:</strong> <span id="profesional-nombre">—</span></p>
+        <p><strong>Servicio:</strong> <span id="servicio-nombre">—</span></p>
+        <p><strong>Fecha:</strong> <span id="turno-fecha">—</span></p>
+        <p><strong>Horario:</strong> <span id="turno-horario">—</span></p>
+        <p><strong>Estado:</strong> <span id="estado-turno">Pendiente</span></p>
+
     </div>
 
     <div class="acciones">
