@@ -36,44 +36,36 @@ def create_turno():
 @turnos_bp.route('/turnos', methods=['GET'])
 @token_required
 def get_turnos():
-    cursor = None
     try:
-        cursor = mysql.connection.cursor() 
-        cursor.execute("SELECT * FROM Turnos") 
-        filas = cursor.fetchall()
         
-        lista_turnos = []
-        for fila in filas:
-            objTurno = Turno(fila) 
-            lista_turnos.append(objTurno.to_json()) 
+        lista_turnos = Turno.get_all_turnos() 
+        if not lista_turnos:
+            # Exito, pero sin turnos
+            return jsonify({"message": "No existen turnos asignados"}), 200 
         
-        if len(lista_turnos) < 1:
-            return jsonify({"message":"No existen turnos asignados"})
+        # Exitos y devuelve turnos
+        return jsonify(lista_turnos), 200
         
-        return jsonify(lista_turnos)
     except Exception as err:
-        return jsonify({"error": str(err)}), 500
-    finally:
-        if cursor:
-            cursor.close()
+       
+        return jsonify({"error": "Error interno al obtener los turnos."}), 500
 
 # DELETE
 @turnos_bp.route('/turnos/<int:id>', methods=['DELETE'])
 @token_required
-def delete_turno(id):
-    cursor = None
+def delete_turno(id:int):
     try:
-        cursor = mysql.connection.cursor()
-        sql = "DELETE FROM Turnos WHERE id = %s"
-        cursor.execute(sql, (id,))
-        mysql.connection.commit()
-
-        if cursor.rowcount == 0:
-            return jsonify({"error": "Turno no encontrado"}), 404
+       
+        filas_afectadas = Turno.delete_turno(id)
+        
+        # Esta logica si la dejo aqui
+        if filas_afectadas == 0:
+            
+            return jsonify({"error": f"Turno ID {id} no encontrado"}), 404
         else:
-            return jsonify({"message": "Turno eliminado correctamente"}), 200
+            #  Eliminación exitosa
+            return jsonify({"message": f"Turno ID {id} eliminado correctamente"}), 200
+            
     except Exception as err:
-        return jsonify({"error": str(err)}), 500
-    finally:
-        if cursor:
-            cursor.close()
+        # 500 Server Error
+        return jsonify({"error": "Error interno del servidor al intentar eliminar el turno."}), 500

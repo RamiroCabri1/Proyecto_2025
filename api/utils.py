@@ -4,6 +4,19 @@ from flask import request, jsonify
 import jwt
 from api import app # Importamos la 'app' para leer la SECRET_KEY
 
+# Módulo de utilidades para convertir el día de Python a nombre de la DB
+def get_dia_nombre(dia_numero):
+    """Convierte el número de día de Python (1=Lunes a 7=Domingo) a nombre."""
+    dias = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"]
+    # Los días de Python (0-6)
+    try:
+        # El día_numero viene de weekday() + 1, así que restamos 1 para el índice
+        return dias[dia_numero - 1] 
+    except IndexError:
+        return None
+
+
+
 def token_required(func):
     """
     Este es el decorador que protege las rutas.
