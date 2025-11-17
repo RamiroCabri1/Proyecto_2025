@@ -27,55 +27,50 @@
     </header>
 
 <main class="login-container">
-    <h1>Crear Cuenta Profesional</h1>
+    <h1>Registro de Profesional</h1>
 
-    <form id="form-registro-profesionales" novalidate>
-        
+    <form id="form-registro-profesional" novalidate>
+
         <div class="form-group">
-            <label for="email">E-mail</label>
-            <input 
-                type="email" 
-                id="email" 
-                name="email" 
-                placeholder="tuemail@ejemplo.com" 
-                required
-            />
+            <label for="nombre">Nombre del profesional / negocio</label>
+            <input type="text" id="nombre" name="nombre" placeholder="Ej: Estética Luna" required>
         </div>
 
         <div class="form-group">
-            <label for="password">Contraseña</label>
-            <input 
-                type="password" 
-                id="password" 
-                name="password" 
-                placeholder="********" 
-                required
-            />
+            <label for="email">Email de acceso</label>
+            <input type="email" id="email" name="email" placeholder="ejemplo@mail.com" required>
         </div>
 
         <div class="form-group">
-            <label for="negocio_id">ID del Negocio</label>
-            <input 
-                type="number" 
-                id="negocio_id" 
-                name="negocio_id" 
-                placeholder="Ej: 1" 
-                required
-            />
+            <label for="password">Crear contraseña</label>
+            <input type="password" id="password" name="password" placeholder="********" required>
         </div>
 
-        <button type="submit" class="btn">Registrarme</button>
+        <div class="form-group">
+            <label for="password2">Confirmar contraseña</label>
+            <input type="password" id="password2" name="password2" placeholder="********" required>
+        </div>
+
+        <div class="form-group">
+            <label for="telefono">Teléfono</label>
+            <input type="text" id="telefono" name="telefono" placeholder="291 4567890">
+        </div>
+
+        <div class="form-group">
+            <label for="direccion">Dirección</label>
+            <input type="text" id="direccion" name="direccion" placeholder="Sarmiento 123, Bahía Blanca">
+        </div>
+
+        <button type="submit" class="btn">Crear cuenta</button>
 
         <p class="note">
-            ¿Ya tenés cuenta? <a href="./login-profesionales.html">Iniciar sesión</a>
+            ¿Ya tenés cuenta?
+            <a href="./login-profesionales.html">Iniciar sesión</a>
         </p>
-
-        <p class="error-msg" id="error-message" hidden></p>
-
     </form>
 </main>
 
-<script src="./js/core/api.js"></script>
-<script src="./js/profesionales/registro.js"></script>
+<script type="module" src="./js/auth/registro-profesionales.js"></script>
+
 </body>
 </html>
