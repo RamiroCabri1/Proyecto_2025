@@ -54,6 +54,11 @@ def get_profesional_por_id(id):
 @profesionales_bp.route('/profesionales', methods=['POST'])
 @token_required
 def create_profesional():
+   # Se deberia ver el tema de que los profesionales no tienen asginados servicios.
+   # cuando consulte por algun profesional, no vere servicios asignados.
+   # quizas que se inicialicen profesionales con una lista vacia de servicios,
+   # que luego pueden ir adquiriendo.
+    
     datos = request.get_json()
     campos_requeridos = ['nombre', 'activo', 'negocio_id']
     if not datos or not all(campo in datos for campo in campos_requeridos):

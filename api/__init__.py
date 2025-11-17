@@ -35,6 +35,6 @@ app.register_blueprint(disponibilidad_bp)
 
 from api.routes.turnos import turnos_bp
 app.register_blueprint(turnos_bp)
-# chequeo pq no me funciona la ruta, esto deja en "/" la ruta
+
 from api.routes.usuarios import usuarios_bp
 app.register_blueprint(usuarios_bp)

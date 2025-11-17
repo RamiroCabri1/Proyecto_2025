@@ -20,7 +20,7 @@ def get_disponibilidad_profesional(id_profesional):
             return jsonify({"error": "Profesional no encontrado"}), 404
         
         # Si existe, buscamos su disponibilidad
-        sql = "SELECT * FROM Disponibilidad WHERE profesional_id = %s"
+        sql = "SELECT * FROM disponibilidades WHERE profesional_id = %s"
         cursor.execute(sql, (id_profesional,))
         
         filas = cursor.fetchall()
@@ -47,6 +47,8 @@ def create_disponibilidad_profesional(id_profesional):
     if not datos or not all(campo in datos for campo in campos_requeridos):
         return jsonify({"error": f"Faltan datos. Se requiere: {campos_requeridos}"}), 400
 
+    # se debe mejorar la logica de la hora porq no me sale bien.
+    
     dia_semana = datos['dia_semana']
     hora_inicio = datos['hora_inicio']
     hora_fin = datos['hora_fin']
@@ -61,7 +63,7 @@ def create_disponibilidad_profesional(id_profesional):
             return jsonify({"error": "Profesional no encontrado"}), 404
 
         # Insertamos el nuevo horario
-        sql = "INSERT INTO Disponibilidad (profesional_id, dia_semana, hora_inicio, hora_fin) VALUES (%s, %s, %s, %s)"
+        sql = "INSERT INTO 	disponibilidades (profesional_id, dia_semana, hora_inicio, hora_fin) VALUES (%s, %s, %s, %s)"
         valores = (id_profesional, dia_semana, hora_inicio, hora_fin)
         
         cursor.execute(sql, valores)
@@ -97,8 +99,9 @@ def update_disponibilidad(id):
         profesional_id = datos['profesional_id']
 
         cursor = mysql.connection.cursor()
-        
-        sql = "UPDATE Disponibilidad SET profesional_id = %s, dia_semana = %s, hora_inicio = %s, hora_fin = %s WHERE id = %s"
+        #posibilidad de mejora, se deberia tener en cuenta cuando un horario ya esta ocupado
+        # y si el nuevo seteo de horario no afecta a otros.
+        sql = "UPDATE disponibilidades SET profesional_id = %s, dia_semana = %s, hora_inicio = %s, hora_fin = %s WHERE id = %s"
         valores = (profesional_id, dia_semana, hora_inicio, hora_fin, id)
         
         cursor.execute(sql, valores)

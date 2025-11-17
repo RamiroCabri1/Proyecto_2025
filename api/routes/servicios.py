@@ -22,6 +22,10 @@ def get_servicios():
             objServicio = Servicio(fila) 
             lista_servicios.append(objServicio.to_json()) 
             
+        # aclaro en caso que no exista servicios disponibles    
+        if len(lista_servicios) <= 0:
+            return jsonify({"message":"No existen servicios asociados en este negocio"})
+            
         return jsonify(lista_servicios)
     except Exception as err:
         return jsonify({"error": str(err)}), 500

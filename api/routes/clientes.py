@@ -56,6 +56,7 @@ def get_cliente_por_id(id):
 def create_cliente():
     datos = request.get_json()
     
+    
     campos_requeridos = ['nombre', 'dni', 'telefono', 'negocio_id']
     if not datos or not all(campo in datos for campo in campos_requeridos):
         return jsonify({"error": f"Faltan datos. Se requiere: {campos_requeridos}"}), 400

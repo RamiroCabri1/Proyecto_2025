@@ -23,7 +23,7 @@ def registro():
 
     # 1. Hashear la contraseña
     password_hash = bcrypt.hashpw(password_plana.encode('utf-8'), bcrypt.gensalt())
-
+    print(password_hash)    
     cursor = None
     try:
         cursor = mysql.connection.cursor()
@@ -47,6 +47,10 @@ def registro():
 # POST /login
 @usuarios_bp.route('/login', methods=['POST'])
 def login():
+    
+    #Aqui la otra opcion seria sacar los datos no como request.get_jason()
+    #Sino como datos = auth.email , auth.password. que es mejor y cual sera al diferencia? 
+    # la forma usada seria la mejor
     datos = request.get_json()
     if not datos or 'email' not in datos or 'password' not in datos:
         return jsonify({"error": "Faltan datos (email, password)"}), 400
@@ -80,6 +84,8 @@ def login():
             }
             token = jwt.encode(payload, app.config['SECRET_KEY'], algorithm="HS256")
             
+            # Falaria mas info. Es una apirestfull, la respuesta tiene q tener informar suficiente como para poder
+            # continuar. aqui faltaria usuario o id y nombre ( o en este caso mail)
             return jsonify({"token": token})
         else:
             # Contraseña INCORRECTA

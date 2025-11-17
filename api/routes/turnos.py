@@ -18,70 +18,19 @@ def create_turno():
         return jsonify({"error": f"Faltan datos. Se requiere: {campos_requeridos}"}), 400
 
     try:
-        fecha_hora_obj = datetime.strptime(datos['fecha_hora'], '%Y-%m-%d %H:%M:%S')
-        dia_semana = fecha_hora_obj.weekday() + 1
-        hora_turno = fecha_hora_obj.time().strftime('%H:%M:%S')
-    except ValueError:
-        return jsonify({"error": "Formato de fecha_hora incorrecto. Usar YYYY-MM-DD HH:MM:SS"}), 400
-
-    cliente_id = datos['cliente_id']
-    profesional_id = datos['profesional_id']
-    servicio_id = datos['servicio_id']
-    negocio_id = datos['negocio_id']
-
-    cursor = None
-    try:
-        cursor = mysql.connection.cursor() # Usamos dictionary=True para leer fácil
-
-        # Validación 1: Disponibilidad
-        sql_disponibilidad = """
-            SELECT * FROM Disponibilidad 
-            WHERE profesional_id = %s AND dia_semana = %s 
-            AND TIME(%s) BETWEEN hora_inicio AND hora_fin
-        """
-        cursor.execute(sql_disponibilidad, (profesional_id, dia_semana, hora_turno))
-        disponibilidad_encontrada = cursor.fetchall() 
+        # LLAMADA SIMPLE AL MODELO: Toda la complejidad está en el método de clase
+        nuevo_turno = Turno.create_and_validate(datos) 
         
-        if not disponibilidad_encontrada:
-            return jsonify({"error": "El profesional no se encuentra disponible en ese día u horario."}), 409
-
-        # Validación 2: Turno Ocupado
-        sql_ocupado = "SELECT id FROM Turnos WHERE profesional_id = %s AND fecha_hora = %s"
-        cursor.execute(sql_ocupado, (profesional_id, datos['fecha_hora']))
-        turno_encontrado = cursor.fetchall()
-        
-        if turno_encontrado:
-            return jsonify({"error": "El turno ya se encuentra ocupado."}), 409
-            
-        # En este punto creamos el turno
-        
-        # Cerramos el cursor dictionary=True y abrimos uno normal para INSERT
-        cursor.close()
-        cursor = mysql.connection.cursor()
-        
-        sql_insert = """
-            INSERT INTO Turnos (fecha_hora, estado, cliente_id, profesional_id, servicio_id, negocio_id) 
-            VALUES (%s, %s, %s, %s, %s, %s)
-        """
-        valores = (datos['fecha_hora'], 'Confirmado', cliente_id, profesional_id, servicio_id, negocio_id)
-        
-        cursor.execute(sql_insert, valores)
-        mysql.connection.commit()
-        
-        nuevo_id = cursor.lastrowid
-        
-        nuevo_turno = {
-            "id": nuevo_id, "fecha_hora": datos['fecha_hora'], "estado": "Confirmado",
-            "cliente_id": cliente_id, "profesional_id": profesional_id,
-            "servicio_id": servicio_id, "negocio_id": negocio_id
-        }
+        # Respuesta exitosa: 201 Created
         return jsonify(nuevo_turno), 201
 
+    except ValueError as e:
+        # Captura errores de validación de negocio (disponibilidad, formato de fecha, etc.)
+        return jsonify({"error": str(e)}), 409 # 409 Conflict
+
     except Exception as err:
-        return jsonify({"error": str(err)}), 500
-    finally:
-        if cursor:
-            cursor.close()
+        # Captura errores de servidor o de base de datos
+        return jsonify({"error": str(err)})
 
 # GET Todos
 @turnos_bp.route('/turnos', methods=['GET'])
@@ -97,7 +46,10 @@ def get_turnos():
         for fila in filas:
             objTurno = Turno(fila) 
             lista_turnos.append(objTurno.to_json()) 
-            
+        
+        if len(lista_turnos) < 1:
+            return jsonify({"message":"No existen turnos asignados"})
+        
         return jsonify(lista_turnos)
     except Exception as err:
         return jsonify({"error": str(err)}), 500
