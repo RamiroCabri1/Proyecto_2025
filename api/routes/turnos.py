@@ -18,7 +18,7 @@ def create_turno():
         return jsonify({"error": f"Faltan datos. Se requiere: {campos_requeridos}"}), 400
 
     try:
-        # LLAMADA SIMPLE AL MODELO: Toda la complejidad está en el método de clase
+        # Esto se creo de nuevo y asi deberia ser en todas las rutas, llamar funciones de clase desde el modelo.
         nuevo_turno = Turno.create_and_validate(datos) 
         
         # Respuesta exitosa: 201 Created
