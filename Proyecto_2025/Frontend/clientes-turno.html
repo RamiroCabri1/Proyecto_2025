@@ -14,7 +14,7 @@
 
     <header>
             <a href="./index.html" class="brand">
-                <img src="./Assets/logo.png" alt="Turn-e Logo" class="logo-img">
+                <img src="./assets/logo.png" alt="Turn-e Logo" class="logo-img">
             </a>
 
         <nav class="header-nav">
@@ -26,34 +26,41 @@
             </ul>
         </nav>
     </header>
-    </header>
 
-    <main class="turno-container">
-        <h1>Ingrese el código de su turno</h1>
+<main>
+    <div class="turno-container">
+        <h1>Consultar tu turno</h1>
 
-    <form id="form-codigo-turno" novalidate>
-        <div class="form-group">
-            <label for="codigo">Número de código</label>
-            <input
-                type="text"
-                id="codigo"
-                name="codigo"
-                placeholder="Ej: 17145"
-                inputmode="numeric"
-                autocomplete="off"
-                required
-            />
-        </div>
+        <form action="detalle-turno.html" method="get">
+            <div class="form-group">
+                <label for="codigo">Código de turno</label>
+                <input 
+                    type="text" 
+                    id="codigo" 
+                    name="codigo" 
+                    placeholder="Ej: TUR-000123" 
+                    required
+                >
+                <div id="mensaje-error" class="mensaje-error"></div>
+            </div>
 
-        <button type="submit" class="btn">Ingresar</button>
+            <button type="submit" class="btn reservar">Ver turno</button>
+        </form>
 
-        <div class="divider" role="separator" aria-hidden="true"></div>
+        <div class="divider"></div>
 
         <p class="note">
-            ¿No tiene código?
-            <a href="./clientes-sacar-turno.html">Sacar turno</a>
+            ¿Todavía no tenés turno?  
+            <a href="./clientes-sacar-turno.html">Reservá uno acá</a>
         </p>
-    </form>
-    </main>
+    </div>
+</main>
+
+</body>
+</html>
+
+<script type="module" src="./js/core/api.js"></script>
+<script src="./js/clientes/consultar-turno.js"></script>
+
 </body>
 </html>

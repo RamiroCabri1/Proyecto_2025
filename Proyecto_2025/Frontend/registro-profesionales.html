@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/style.css">
+    <title>Turn-e | Registro Profesionales</title>
+    <link rel="icon" type="image/png" href="assets/logo2.png">
+</head>
+
+<body>
+
+    <header>
+        <a href="./index.html" class="brand">
+            <img src="./assets/logo.png" alt="Turn-e Logo" class="logo-img" />
+        </a>
+
+        <nav class="header-nav">
+            <ul>
+                <li><a href="./index.html">Inicio</a></li>
+                <li><a href="./clientes-turno.html">Portal Cliente</a></li>
+                <li><a href="./login-profesionales.html">Portal Profesionales</a></li>
+            </ul>
+        </nav>
+    </header>
+
+<main class="login-container">
+    <h1>Registro de Profesional</h1>
+
+    <form id="form-registro-profesional" novalidate>
+
+        <div class="form-group">
+            <label for="nombre">Nombre del profesional / negocio</label>
+            <input type="text" id="nombre" name="nombre" placeholder="Ej: Estética Luna" required>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email de acceso</label>
+            <input type="email" id="email" name="email" placeholder="ejemplo@mail.com" required>
+        </div>
+
+        <div class="form-group">
+            <label for="password">Crear contraseña</label>
+            <input type="password" id="password" name="password" placeholder="********" required>
+        </div>
+
+        <div class="form-group">
+            <label for="password2">Confirmar contraseña</label>
+            <input type="password" id="password2" name="password2" placeholder="********" required>
+        </div>
+
+        <div class="form-group">
+            <label for="telefono">Teléfono</label>
+            <input type="text" id="telefono" name="telefono" placeholder="291 4567890">
+        </div>
+
+        <div class="form-group">
+            <label for="direccion">Dirección</label>
+            <input type="text" id="direccion" name="direccion" placeholder="Sarmiento 123, Bahía Blanca">
+        </div>
+
+        <button type="submit" class="btn">Crear cuenta</button>
+
+        <p class="note">
+            ¿Ya tenés cuenta?
+            <a href="./login-profesionales.html">Iniciar sesión</a>
+        </p>
+    </form>
+</main>
+
+<script type="module" src="./js/auth/registro-profesionales.js"></script>
+
+</body>
+</html>
