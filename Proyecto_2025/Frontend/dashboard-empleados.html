@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Turn-e | Dashboard profesionales</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="./assets/logo2.png">
+
+    <link rel="stylesheet" href="./css/dashboard.css">
+</head>
+
+<body>
+
+    <header class="topbar">
+        <div class="logo-header">
+            <img src="./assets/logo.png" alt="Logo Turn-e" />
+        </div>
+
+        <div class="top-links">
+            <a href="./index.html" class="logout-btn" title="Cerrar sesión">
+                <img src="./assets/logout.svg" alt="Cerrar sesión">
+            </a>
+        </div>
+    </header>
+
+    <div class="dashboard-container">
+
+        <aside class="sidebar">
+            <h3>Panel</h3>
+            <nav>
+                <ul>
+                    <li><a href="./dashboard-clientes.html"> Clientes</a></li>
+                    <li><a href="./dashboard-servicios.html"> Servicios</a></li>
+                    <li class="active"><a href="./dashboard-empleados.html"> Empleados</a></li>
+                    <li><a href="./dashboard-ajustes.html"> Ajustes</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <input type="hidden" id="negocio_id" />
+
+            <h1>Empleados</h1>
+
+            <div class="acciones-superiores">
+                <button id="btn-agregar-empleado" class="btn">+ Agregar empleado</button>
+            </div>
+
+            <div class="table-container">
+                <table id="tabla-empleados">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Puesto</th>
+                            <th>Email</th>
+                            <th>Activo</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="">
+                        <tr>
+                            <td>Laura Gómez</td>
+                            <td>Maquilladora</td>
+                            <td>laura@empresa.com</td>
+                            <td>Sí</td>
+
+                            <td>
+                                <a href="#" class="accion-editar">Editar</a> |
+                                <a href="#" class="accion-cancelar">Eliminar</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Marcos Díaz</td>
+                            <td>Masajista</td>
+                            <td>marcos@empresa.com</td>
+                            <td>Sí</td>
+
+                            <td>
+                                <a href="#" class="accion-editar">Editar</a> |
+                                <a href="#" class="accion-cancelar">Eliminar</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+
+    </div> 
+
+<!-- Modal de prueba para agregar y editar empleados -->
+<div id="modal-empleado" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" id="cerrar-modal-empleado">&times;</span>
+        <h2>Agregar nuevo empleado</h2>
+
+        <form id="form-empleado">
+            <div class="form-group">
+                <label for="nombre-empleado">Nombre completo</label>
+                <input type="text" id="nombre-empleado" name="nombre" placeholder="Ej: Laura Gómez" required>
+                <input type="hidden" id="negocio-id-empleado" name="negocio_id">
+            </div>
+
+            <div class="form-group">
+                <label for="puesto-empleado">Puesto</label>
+                <input type="text" id="puesto-empleado" name="puesto" placeholder="Ej: Masajista" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email-empleado">Correo electrónico</label>
+                <input type="email" id="email-empleado" name="email" placeholder="Ej: laura@empresa.com" required>
+            </div>
+
+            <div class="form-group">
+                <label for="activo-empleado">¿Activo?</label>
+                <select id="activo-empleado" name="activo">
+                        <option value="true">Sí</option>
+                        <option value="false">No</option>
+                </select>
+</div>
+            <input type="hidden" id="negocio-id-empleado" name="negocio_id">
+            <button type="submit" class="btn">Guardar empleado</button>
+        </form>
+    </div>
+</div>
+
+<!-- Modal de confirmación para eliminar empleadooo -->
+<div id="modal-confirmacion" class="modal">
+    <div class="modal-content modal-confirm">
+        <h2>¿Eliminar este registro?</h2>
+        <p>Esta acción no se puede deshacer. ¿Estás seguro de que querés continuar?</p>
+
+        <div class="modal-actions">
+            <button class="btn danger" id="confirmar-eliminar">Eliminar</button>
+            <button class="btn" id="cancelar-eliminar">Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<script type="module" src="./js/profesionales/dashboard-empleados.js"></script>
+
+</body>
+</html>

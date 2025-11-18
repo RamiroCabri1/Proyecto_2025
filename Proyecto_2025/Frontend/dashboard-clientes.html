@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Turn-e | Dashboard profesionales</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="./assets/logo2.png">
+
+    <link rel="stylesheet" href="./css/dashboard.css">
+</head>
+
+<body>
+
+    <header class="topbar">
+        <div class="logo-header">
+            <img src="./assets/logo.png" alt="Logo Turn-e" />
+        </div>
+
+        <div class="top-links">
+            <a href="./index.html" class="logout-btn" title="Cerrar sesión">
+                <img src="./assets/logout.svg" alt="Cerrar sesión">
+            </a>
+        </div>
+    </header>
+
+    <div class="dashboard-container">
+
+        <aside class="sidebar">
+            <h3>Panel</h3>
+            <nav>
+                <ul>
+                    <li class="active"><a href="./dashboard-clientes.html"> Clientes</a></li>
+                    <li><a href="./dashboard-servicios.html"> Servicios</a></li>
+                    <li><a href="./dashboard-empleados.html"> Empleados</a></li>
+                    <li><a href="./dashboard-ajustes.html"> Ajustes</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <input type="hidden" id="negocio_id" />
+
+            <h1>Clientes</h1>
+
+            <div class="table-container">
+                <table id = "tabla-clientes">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Email</th>
+                            <th>Servicio</th>
+                            <th>Turno</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody id="clientes-body">
+                        <tr>
+                            <td>Ana María</td>
+                            <td>ana@mail.com</td>
+                            <td>Masaje</td>
+                            <td>10:30</td>
+                            <td><button class="btn-cancelar" data-id="1">Cancelar</button></td>
+                        </tr>
+                        <tr>
+                            <td>Juan Pérez</td>
+                            <td>juan@mail.com</td>
+                            <td>Lifting</td>
+                            <td>11:00</td>
+                            <td><button class="btn-cancelar" data-id="1">Cancelar</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+
+    </div>
+
+<script type="module" src="./js/core/api.js"></script>
+<script type="module" src="./js/profesionales/dashboard-clientes.js"></script>
+
+</body>
+</html>

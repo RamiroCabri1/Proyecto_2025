@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/style.css">
+    <title>Turn-e | Clientes </title>
+    <link rel="icon" type="image/png" href="assets/logo2.png">
+</head>
+
+<body>
+
+    <header>
+            <a href="./index.html" class="brand">
+                <img src="./assets/logo.png" alt="Turn-e Logo" class="logo-img">
+            </a>
+
+        <nav class="header-nav">
+            <ul>
+                <li><a href="./index.html">Inicio</a></li>
+                <li><a href="./clientes-turno.html">Portal clientes</a></li>   
+                <li><a href="./login-profesionales.html">Portal Profesionales</a></li>
+
+            </ul>
+        </nav>
+    </header>
+
+<main>
+    <div class="turno-container">
+        <h1>Consultar tu turno</h1>
+
+        <form action="detalle-turno.html" method="get">
+            <div class="form-group">
+                <label for="codigo">Código de turno</label>
+                <input 
+                    type="text" 
+                    id="codigo" 
+                    name="codigo" 
+                    placeholder="Ej: TUR-000123" 
+                    required
+                >
+                <div id="mensaje-error" class="mensaje-error"></div>
+            </div>
+
+            <button type="submit" class="btn reservar">Ver turno</button>
+        </form>
+
+        <div class="divider"></div>
+
+        <p class="note">
+            ¿Todavía no tenés turno?  
+            <a href="./clientes-sacar-turno.html">Reservá uno acá</a>
+        </p>
+    </div>
+</main>
+
+</body>
+</html>
+
+<script type="module" src="./js/core/api.js"></script>
+<script src="./js/clientes/consultar-turno.js"></script>
+
+</body>
+</html>
