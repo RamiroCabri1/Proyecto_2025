@@ -4,26 +4,13 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("dashboard-clientes.js cargado.");
 
     const tablaBody = document.getElementById("clientes-body");
-    const NEGOCIO_ID = localStorage.getItem("negocio_id") || 1; 
+    const NEGOCIO_ID = localStorage.getItem("negocio_id");
 
-    //datos mockup a cambiar cuando conectemos con backuppppp
+    if (!NEGOCIO_ID){
 
-    const clientesFalsos = [
-        {
-            id: 1,
-            nombre: "Ana Maria",
-            email: "ana@gmail.com",
-            servicio: "masaje",
-            horario: "10:00"
-        },
-        {
-            id: 2, 
-            nombre: "Juan Jose",
-            email: "juan@gmail.com",
-            servicio: "lifting",
-            horario: "11:00"
-        }
-    ];
+        console.error("No hay negocio_id");
+        return;
+    }
 
     //funcion llenar tabla
     function renderTabla(clientes) {
@@ -34,46 +21,68 @@ document.addEventListener("DOMContentLoaded", () => {
 
             fila.innerHTML = `
                 <td>${cliente.nombre}</td>
-                <td>${cliente.email}</td>
-                <td>${cliente.servicio}</td>
-                <td>${cliente.horario}</td>
+                <td>${cliente.apellido || ""}</td>
+                <td>${cliente.dni}</td>
+                <td>${cliente.email || "-"}</td>
+                <td>${cliente.telefono || "-"}</td>
                 <td>
-                    <button class="btn-cancelar" data-id="${cliente.id}">
-                        Cancelar
+                    <button class="btn-eliminar" data-id="${cliente.id}">
+                        Eliminar
                     </button>
                 </td>
             `;
-
             tablaBody.appendChild(fila);
         });
 
 
-        activarBotonesCancelar();
+        activarBotonesEliminar();
     
     }
 
-    //accion cancelr turno 
+    //accion eliminar cliente
 
-    function activarBotonesCancelar(){
-        const botones = document.querySelectorAll(".btn-cancelar");
+    function activarBotonesEliminar(){
+        const botones = document.querySelectorAll(".btn-eliminar");
 
         botones.forEach(btn =>{
-            btn.addEventListener("click",(e) => {
+            btn.addEventListener("click",async (e) => {
                 const id = e.target.dataset.id;
-                //para cambiar dsps
-                alert(`Cancelando turno ID ${id} (falso por ahora)`);
+                
+                const confirmar = confirm("¿Seguro que deseas eliminar este cliente?");
+                if (!confirmar) return;
+
+                const res = await apiDelete(`/clientes/${id}`);
+
+                if (!res.ok || res.error) {
+                    alert("No se pudo eliminar el cliente");
+                    console.error(res.error);
+                    return;
+                }
+
+                cargarClientes();
             });
-        });  
+        });
     }
 
 
-    //simulamos carga inicial
-    function cargarClientes(){
-        console.log("Cargando clientes de mentiritas");
-        renderTabla(clientesFalsos);
+    //carga real
+    async function cargarClientes() {
+        console.log("Cargando clientes...");
+
+        const res = await apiGet("/clientes");
+
+        if (!res.ok || res.error) {
+            console.error("Error cargando clientes:", res.error);
+            return;
+        }
+
+        // Filtrar por negocio del usuario logueado
+        const clientesFiltrados = res.filter(c => c.negocio_id == NEGOCIO_ID);
+
+        renderTabla(clientesFiltrados);
     }
 
     cargarClientes();
-
 });
+    
 

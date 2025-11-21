@@ -1,3 +1,5 @@
+//ya modificada y lista
+
 import { apiPost } from "../core/api.js"
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -16,22 +18,52 @@ document.addEventListener("DOMContentLoaded", () => {
         const direccion = document.getElementById("direccion").value.trim();
 
 
-        //validaciones
+        //validacion de constraseñas
         if (pass1 !== pass2){
             alert("Las contraseñas no coiciden");
             return;
         }
 
-        const payload ={
-            nombre,
-            email,
-            password: pass1,
-            telefono,
-            direccion
+        //crear cuenta negocio
+        const payloadNegocio ={
+            nombre: nombreNegocio,
+            direccion,
+            telefono
         };
 
-        console.log("Registrando profesional:", payload);
+        const resNegocio = await apiPost("/negocios", payloadNegocio);
 
+        if (!resNegocio || resNegocio.error){
+            alert("Error al crear negocio: " + (resNegocio?.error || "desconocido"));
+            return;
+
+        }
+
+        const negocioId = resNegocio.id;
+        console.log("Negocio creado:", resNegocio);
+
+
+        //crear usuario duenio
+        const payloadUsuario = {
+            email, 
+            password: pass1,
+            negocio_id: negocioId
+        };
+
+        const resUsuario = await apiPost("/registro", payloadUsuario);
+
+        if (!resUsuario || resUsuario.error){
+            alert("Error al registrar usuario" + (resUsuario?.error || "desconocido"));
+            return;
+        }
+
+        console.log("Usuario registrado:", resUsuario);
+
+
+
+
+
+        // Flujo exitoso
         alert("Registro completdo")
         window.location.href = "./login-profesionales.html";
     });

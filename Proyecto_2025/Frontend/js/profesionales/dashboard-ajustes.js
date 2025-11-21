@@ -1,3 +1,4 @@
+//modificado y listo
 import { apiGet, apiPut} from "../core/api.js";
 
 document.addEventListener("DOMContentLoaded", () =>{
@@ -10,36 +11,35 @@ document.addEventListener("DOMContentLoaded", () =>{
     const inputNombre = document.getElementById("nombre-negocio");
     const inputTelefono = document.getElementById("telefono-negocio");
     const inputDireccion = document.getElementById("direccion-negocio");
-    const inputApertura = document.getElementById("hora-apertura");
-    const inputCierre = document.getElementById("hora-cierre");
 
+    //tomamos negocio id del usuario logueado
+    const NEGOCIO_ID = localStorage.getItem("negocio_id"); 
 
-    const NEGOCIO_ID = localStorage.getItem("negocio_id")  || 1; 
-
-
-    //Carga de datos iniciales
-
-    async function cargarDatos() {
-        console.log("Cargando datos del negocio . . . ")
-
-    //Hardcodeado x ahora
-        const datosFalsos = {
-            nombre: "nombre del negociooo",
-            telefono: "29114444444",
-            direccion: "cashe 123",
-            hora_apertura: "09:00",
-            hora_cierre: "10:00"
-        };
-
-        //rellenar inputs
-        inputNombre.value = datosFalsos.nombre;
-        inputTelefono.value = datosFalsos.telefono;
-        inputDireccion.value = datosFalsos.direccion;
-        inputApertura.value = datosFalsos.apertura;
-        inputCierre.value = datosFalsos.cierre;
-
+    if (!NEGOCIO_ID) {
+        console.error("No se encontró NEGOCIO_ID en localStorage.");
+        alert("Error: No se pudo cargar el negocio.");
+        return;
     }
 
+    //Carga de datos iniciales (editado, datos mock borrados)
+
+    async function cargarDatos() {
+        console.log("Cargando datos del negocio...");
+
+        const res = await apiGet(`/negocios/${NEGOCIO_ID}`);
+
+        if (!res.ok || res.error) {
+            console.error("Error cargando negocio:", res.error);
+            alert("Error al cargar los datos del negocio.");
+            return;
+        }
+
+        // Llenar inputs con datos reales
+        inputNombre.value = res.nombre;
+        inputTelefono.value = res.telefono;
+        inputDireccion.value = res.direccion;
+
+    }
 
     cargarDatos();
 
@@ -51,17 +51,21 @@ document.addEventListener("DOMContentLoaded", () =>{
         const payload = {
             nombre: inputNombre.value.trim(),
             telefono: inputTelefono.value.trim(),
-            direccion: inputDireccion.value.trim(),
-            hora_apertura: inputApertura.value,
-            hora_cierre: inputCierre.value
+            direccion: inputDireccion.value.trim()
         };
 
-        console.log("Datos listos pra enviar:",payload);
+        console.log("Datos listos para enviar:",payload);
 
-        alert("Cambios guardados");
+        const res = await apiPut(`/negocios/${NEGOCIO_ID}`, payload);
+    
+        if (!res.ok || res.error) {
+            console.error("Error al guardar cambios:", res.error);
+            alert("No se pudieron guardar los cambios.");
+            return;
+        }
+
+        alert("Cambios guardados correctamente");
     });
-});
+});;
 
 
-
-//FALTA BACKEND ESTO ES UNA SIMULACIONNNNNNNNNNNNN

@@ -30,7 +30,8 @@
 <main class="login-container">
     <h1>Portal de Profesionales</h1>
 
-    <form id="form-login-profesionales" method="post" action="#" novalidate>
+    <form id="form-login-profesionales" novalidate>
+
         <div class="form-group">
             <label for="email">E-mail</label>
             <input 
@@ -52,23 +53,27 @@
                 placeholder="********" 
                 autocomplete="current-password" 
                 required
-        />
+            />
         </div>
 
         <button type="submit" class="btn">Iniciar sesión</button>
-        <p class="error-msg" id="error-message" hidden>Usuario o contraseña incorrectos.</p>
 
+        <p class="error-msg" id="error-message" hidden>
+            Usuario o contraseña incorrectos.
+        </p>
 
         <p class="note">
             ¿No estás registrado?
-        <a href="./registro-profesionales.html" rel="nofollow">Registrarme</a>
-</p>
-
+            <a href="./registro-profesionales.html" rel="nofollow">Registrarme</a>
+        </p>
 
     </form>
 </main>
 
+
 <script type="module" src="./js/core/api.js"></script>
+<script type="module" src="./js/auth/login-profesionales.js"></script>
+
 
 </body>
 </html>
