@@ -54,84 +54,40 @@
                     <thead>
                         <tr>
                             <th>Nombre</th>
-                            <th>Puesto</th>
-                            <th>Email</th>
                             <th>Activo</th>
                             <th>Acción</th>
                         </tr>
                     </thead>
-
-                    <tbody id="">
-                        <tr>
-                            <td>Laura Gómez</td>
-                            <td>Maquilladora</td>
-                            <td>laura@empresa.com</td>
-                            <td>Sí</td>
-
-                            <td>
-                                <a href="#" class="accion-editar">Editar</a> |
-                                <a href="#" class="accion-cancelar">Eliminar</a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Marcos Díaz</td>
-                            <td>Masajista</td>
-                            <td>marcos@empresa.com</td>
-                            <td>Sí</td>
-
-                            <td>
-                                <a href="#" class="accion-editar">Editar</a> |
-                                <a href="#" class="accion-cancelar">Eliminar</a>
-                            </td>
-                        </tr>
+                    <tbody>
                     </tbody>
                 </table>
             </div>
-        </main>
+    </main>
 
     </div> 
 
-<!-- Modal de prueba para agregar y editar empleados -->
+<!-- Modal agregar empleado -->
 <div id="modal-empleado" class="modal">
     <div class="modal-content">
         <span class="close-btn" id="cerrar-modal-empleado">&times;</span>
-        <h2>Agregar nuevo empleado</h2>
+        <h2>Agregar empleado</h2>
 
         <form id="form-empleado">
             <div class="form-group">
                 <label for="nombre-empleado">Nombre completo</label>
-                <input type="text" id="nombre-empleado" name="nombre" placeholder="Ej: Laura Gómez" required>
-                <input type="hidden" id="negocio-id-empleado" name="negocio_id">
+                <input type="text" id="nombre-empleado" name="nombre" required>
             </div>
 
-            <div class="form-group">
-                <label for="puesto-empleado">Puesto</label>
-                <input type="text" id="puesto-empleado" name="puesto" placeholder="Ej: Masajista" required>
-            </div>
-
-            <div class="form-group">
-                <label for="email-empleado">Correo electrónico</label>
-                <input type="email" id="email-empleado" name="email" placeholder="Ej: laura@empresa.com" required>
-            </div>
-
-            <div class="form-group">
-                <label for="activo-empleado">¿Activo?</label>
-                <select id="activo-empleado" name="activo">
-                        <option value="true">Sí</option>
-                        <option value="false">No</option>
-                </select>
-</div>
-            <input type="hidden" id="negocio-id-empleado" name="negocio_id">
-            <button type="submit" class="btn">Guardar empleado</button>
+            <button type="submit" class="btn">Guardar</button>
         </form>
     </div>
 </div>
 
-<!-- Modal de confirmación para eliminar empleadooo -->
+<!-- Modal de confirmación para eliminar empleado -->
 <div id="modal-confirmacion" class="modal">
     <div class="modal-content modal-confirm">
-        <h2>¿Eliminar este registro?</h2>
-        <p>Esta acción no se puede deshacer. ¿Estás seguro de que querés continuar?</p>
+        <h2>¿Eliminar empleado?</h2>
+        <p>Esta acción no se puede deshacer.</p>
 
         <div class="modal-actions">
             <button class="btn danger" id="confirmar-eliminar">Eliminar</button>
@@ -139,6 +95,8 @@
         </div>
     </div>
 </div>
+
+
 
 <script type="module" src="./js/profesionales/dashboard-empleados.js"></script>
 

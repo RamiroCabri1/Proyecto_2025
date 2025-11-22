@@ -1,3 +1,5 @@
+//modificado y listo
+
 import { apiGet, apiDelete } from "../core/api.js";
 
 document.addEventListener("DOMContentLoaded", () => {

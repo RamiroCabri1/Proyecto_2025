@@ -41,46 +41,30 @@
         </aside>
 
         <main class="main-content">
-            <input type="hidden" id="negocio_id" />
+        <h1>Servicios</h1>
 
-            <h1>Servicios</h1>
+        <div class="acciones-superiores">
+            <button id="btn-agregar-servicio" class="btn">+ Agregar servicio</button>
+        </div>
 
-            <div class="acciones-superiores">
-                <button id="btn-agregar-servicio" class="btn">+ Agregar servicio</button>
-            </div>
+        <div class="table-container">
+            <table id="tabla-servicios">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Duración</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody id="servicios-body">
+                </tbody>
+            </table>
+        </div>
+    </main>
 
-            <div class="table-container">
-                <table id="tabla-servicios">
-                    <thead>
-                        <tr>
-                            <th>Nombre</th>
-                            <th>Duración</th>
-                            <th>Precio</th>
-                            <th>Acción</th>
-                        </tr>
-                    </thead>
-                    <tbody id="servicios-body">
-                        <tr>
-                            <td>Masaje relajante</td>
-                            <td>45 min</td>
-                            <td>$8.000</td>
-                            <td><a href="#" class="accion-cancelar">Eliminar</a></td>
-                        </tr>
-                        <tr>
-                            <td>Depilación facial</td>
-                            <td>30 min</td>
-                            <td>$5.000</td>
-                            <td><a href="#" class="accion-cancelar">Eliminar</a></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </main>
+</div>
 
-    </div>
-
-
-<!-- Modal para agregar servicio/pruebitaaa, no definitivo-->
+<!-- Modal para agregar servicio-->
 <div id="modal-servicio" class="modal">
     <div class="modal-content">
         <span class="close-btn" id="cerrar-modal">&times;</span>
@@ -89,37 +73,17 @@
         <form id="form-servicio">
             <div class="form-group">
                 <label for="nombre-servicio">Nombre</label>
-                <input 
-                    type="text" 
-                    id="nombre-servicio" 
-                    name="nombre" 
-                    placeholder="Ej: Masaje relajante" 
-                    required
-                >
+                <input type="text" id="nombre-servicio" required>
             </div>
 
             <div class="form-group">
                 <label for="descripcion-servicio">Descripción</label>
-                    <textarea 
-                        id="descripcion-servicio" 
-                        name="descripcion" 
-                        placeholder="Ej: Sesión de masaje para aliviar el estrés"
-                        rows="3" 
-                        required
-                ></textarea>
+                <textarea id="descripcion-servicio" rows="3" required></textarea>
             </div>
 
             <div class="form-group">
                 <label for="duracion-servicio">Duración (minutos)</label>
-                <input 
-                    type="number" 
-                    id="duracion-servicio" 
-                    name="duracion" 
-                    placeholder="Ej: 45"
-                    min="10" 
-                    max="180" 
-                    required
-                >
+                <input type="number" id="duracion-servicio" min="10" max="180" required>
             </div>
 
             <button type="submit" class="btn">Guardar servicio</button>
@@ -127,7 +91,6 @@
     </div>
 </div>
 
-<script type="module" src="./js/core/api.js"></script>
 <script type="module" src="./js/profesionales/dashboard-servicios.js"></script>
 
 </body>

@@ -10,86 +10,104 @@ document.addEventListener("DOMContentLoaded", () =>{
     const btnCerrarModal = document.getElementById("cerrar-modal");
     const formServicio = document.getElementById("form-servicio");
 
-    //servicios de pruebita
-    const serviciosMock = [
-        {
-            id: 1,
-            nombre: "Masaje relajante",
-            duracion: 45,
-            precio: 8000
-        },
-        {
-            id: 2,
-            nombre: "Depilación facial",
-            duracion: 30,
-            precio: 5000
-        }
-    ];
+    const NEGOCIO_ID = localStorage.getItem("negocio_id");
+
+    if (!NEGOCIO_ID) {
+        alert("No se encontró negocio_id");
+        return;
+    }
+
+    //abrir modal
+    btnAbrirModal.addEventListener("click", () => {
+        modal.style.display = "block";
+    });
+
+    // cerrar modal
+    btnCerrarModal.addEventListener("click", () => {
+        modal.style.display = "none";
+    });
 
     // reenderizar tabla
     function renderTabla(servicios){
         tablaBody.innerHTML = "";
 
-        servicios.forEach(servicio => {
+        servicios.forEach(serv => {
             const fila = document.createElement("tr");
 
             fila.innerHTML = `
-            <td>${servicio.nombre}</td>
-            <td>${servicio.duracion} min</td>
-            <td>$${servicio.precio}</td>
-            <td>
-                <a href="#" class="accion-cancelar" data-id="${servicio.id}">Eliminar</a>
-            </td>
-        `;
+                <td>${serv.nombre}</td>
+                <td>${serv.duracion_turno_min} min</td>
+                <td>
+                    <button class="btn-eliminar" data-id="${serv.id}">Eliminar</button>
+                </td>
+            `;
 
         tablaBody.appendChild(fila);
         });
+        activarBotonesEliminar();
     }
 
-    function abrirModal(){
-        modal.style.display = "block";
-    }
+    //cargar servicios
 
-    function cerrarModal(){
-        modal.style.display="none";
-    }
+    async function cargarServicios() {
+        const res = await apiGet("/servicios");
 
-    //guardar servicio nuevo
-    formServicio.addEventListener("submit", (e) =>{
-        e.preventDefault();
-
-        const nombre = document.getElementById("nombre-servicio").value.trim();
-        const descripcion = document.getElementById("descripcion-servicio").value.trim();
-        const duracion = parseInt(document.getElementById("duracion-servicio").value);
-
-
-        //creamos un nuevo servicio (de mentiritas)
-        const nuevoServicio = {
-            id: Date.now(),
-            nombre, 
-            duracion,
-            precio: 0
+        if (!res.ok || res.error) {
+            console.error("Error obteniendo servicios:", res.error);
+            return;
         }
 
-        //Agregamos al array de mentiritas
-        serviciosMock.push(nuevoServicio)
-        
-        // refresh tabla
-        renderTabla(serviciosMock);
+        const filtrados = res.filter(s => s.negocio_id == NEGOCIO_ID);
 
-        //cerramos modal
-        cerrarModal();
+        renderTabla(filtrados);
+    }
 
-        //limpiar formulario
-        formServicio.reset();
 
-        //mensaje de exitoooo
-        alert("Servicio agregado (de mentiritas)");
-    });
+    //guardar servicio nuevo
+    formServicio.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-    btnAbrirModal.addEventListener("click", abrirModal);
-    btnCerrarModal.addEventListener("click", cerrarModal);
+    const payload = {
+        nombre: document.getElementById("nombre-servicio").value.trim(),
+        descripcion: document.getElementById("descripcion-servicio").value.trim(),
+        duracion_turno_min: Number(document.getElementById("duracion-servicio").value),
+        negocio_id: Number(NEGOCIO_ID)
+    };
 
-    //cargar tabla
-    renderTabla(serviciosMock);
+    const res = await apiPost("/servicios", payload);
+
+    if (!res.ok || res.error) {
+        alert("No se pudo crear el servicio");
+        return;
+    }
+
+    modal.style.display = "none";
+    formServicio.reset();
+    cargarServicios();
 });
+
+    // Eliminar servicio
+    function activarBotonesEliminar() {
+        document.querySelectorAll(".btn-eliminar").forEach(btn => {
+            btn.addEventListener("click", async () => {
+
+                const confirmar = confirm("¿Eliminar este servicio?");
+                if (!confirmar) return;
+
+                const id = btn.dataset.id;
+
+                const res = await apiDelete(`/servicios/${id}`);
+
+                if (!res.ok || res.error) {
+                    alert("No se pudo eliminar");
+                    return;
+                }
+
+                cargarServicios();
+            });
+        });
+    }
+
+    // Inicio
+    cargarServicios();
+}); 
