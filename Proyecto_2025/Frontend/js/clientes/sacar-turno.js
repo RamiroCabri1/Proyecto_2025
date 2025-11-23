@@ -10,101 +10,226 @@ document.addEventListener("DOMContentLoaded", () => {
     const gridHorarios = document.getElementById("horarios-grid");
     const form = document.querySelector("form");
 
-    // mockssssssss
-    const profesionalesMock = {
-        "1": [
-            { id: 101, nombre: "Maria Sosa" },
-            { id: 102, nombre: "Carolina Rossi" }
-        ],
-        "2": [
-            { id: 201, nombre: "Julieta Romero" }
-        ],
-        "3": [
-            { id: 301, nombre: "Fabian Torres" }
-        ]
-    };
+    // parte corregida y modificada
 
-    const serviciosMock = {
-        "101": [
-            { id: 1, nombre: "Masajes" },
-            { id: 2, nombre: "Color" }
-        ],
-        "102": [
-            { id: 3, nombre: "Limpieza Facial" }
-        ],
-        "201": [
-            { id: 4, nombre: "Depilación" },
-            { id: 5, nombre: "Pestañas" }
-        ],
-        "301": [
-            { id: 6, nombre: "Kinesiología Deportiva" }
-        ]
-    };
+    let profesionales = [];
+    let servicios = [];
 
-    function obtenerHorariosMock() {
-        return [
-            "09:00", "09:30", "10:00",
-            "10:30", "11:00", "11:30",
-            "12:00", "12:30"
-        ];
+    const DIAS_SEMANA = ["domingo", "lunes", "martes", "miercoles", "jueves", "viernes", "sabado"];
+
+    function obtenerDiaSemana(fechaStr) {
+        if (!fechaStr) return null;
+        //hora forzada p evitar lios de timezone
+        const date = new Date(fechaStr + "T00:00:00");
+        const idx = date.getDay();
+        return DIAS_SEMANA[idx];
     }
 
-    // Carga de prof. x negocio
-    selectNegocio.addEventListener("change", () => {
-        const idNegocio = selectNegocio.value;
+    function generarHorarios(horaInicio, horaFin, duracionMin){
+        const horarios = [];
+        if (!horaInicio || !horaFin || !duracionMin) return horarios;
+
+        const [hIni, mIni] = horaInicio.split(":").map(Number);
+        const [hFin, mFin] = horaFin.split(":").map(Number);
+
+        let inicio = hIni * 60 + mIni;
+        const fin = hFin * 60 + mFin;
+
+        while (inicio + duracionMin <= fin) {
+            const h = Math.floor(inicio / 60);
+            const m = inicio % 60;
+            horarios.push(`${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}`);
+            inicio += duracionMin;
+        }
+
+        return horarios;
+    }
+
+    // Cargar negocios reales
+    async function cargarNegocios() {
+        try {
+            const res = await apiGet("/negocios");
+
+            if (!res.ok || res.error) {
+                console.error("Error cargando negocios:", res.error);
+                return;
+            }
+
+            // Asumimos que el backend devuelve un array de negocios
+            const lista = Array.isArray(res) ? res : (res.data || []);
+
+            selectNegocio.innerHTML = `<option value="">Seleccionar negocio</option>`;
+
+            lista.forEach(neg => {
+                const op = document.createElement("option");
+                op.value = neg.id;
+                op.textContent = neg.nombre;
+                selectNegocio.appendChild(op);
+            });
+
+        } catch (err) {
+            console.error("Error inesperado cargando negocios:", err);
+        }
+    }
+
+    // Carga de prof. y serv. x negocio
+    async function cargarProfesionalesYServicios(idNegocio) {
+        //reset de selets y horarios
 
         selectProfesional.innerHTML = `<option value="">Seleccionar profesional</option>`;
         selectServicio.innerHTML = `<option value="">Seleccionar servicio</option>`;
         gridHorarios.innerHTML = `<p class="placeholder-horarios">Seleccioná una fecha</p>`;
 
+        profesionales = [];
+        servicios = [];
+
         if (!idNegocio) return;
 
-        (profesionalesMock[idNegocio] || []).forEach(p => {
-            const op = document.createElement("option");
-            op.value = p.id;
-            op.textContent = p.nombre;
-            selectProfesional.appendChild(op);
-        });
-    });
+        try {
+            const [resProf, resServ] = await Promise.all([
+                apiGet("/profesionales"),
+                apiGet("/servicios")
+            ]);
 
-    // Carga de servicios x profesional
-    selectProfesional.addEventListener("change", () => {
+            // Profesionales
+            if (!resProf.ok || resProf.error) {
+                console.error("Error cargando profesionales:", resProf.error);
+            } else {
+                const listaProf = Array.isArray(resProf) ? resProf : (resProf.data || []);
+                profesionales = listaProf.filter(p => p.negocio_id == idNegocio);
+
+                profesionales.forEach(p => {
+                    const op = document.createElement("option");
+                    op.value = p.id;
+                    op.textContent = p.nombre;
+                    selectProfesional.appendChild(op);
+                });
+            }
+
+            // Servicios
+            if (!resServ.ok || resServ.error) {
+                console.error("Error cargando servicios:", resServ.error);
+            } else {
+                const listaServ = Array.isArray(resServ) ? resServ : (resServ.data || []);
+                servicios = listaServ.filter(s => s.negocio_id == idNegocio);
+
+                servicios.forEach(s => {
+                    const op = document.createElement("option");
+                    op.value = s.id;
+                    op.textContent = s.nombre;
+                    selectServicio.appendChild(op);
+                });
+            }
+
+        } catch (err) {
+            console.error("Error inesperado cargando profesionales/servicios:", err);
+        }
+    }
+
+    // carga de horarios segun profesionaeles x servicio x fecha
+    async function cargarHorarios() {
         const profesionalID = selectProfesional.value;
-        selectServicio.innerHTML = `<option value="">Seleccionar servicio</option>`;
-        gridHorarios.innerHTML = `<p class="placeholder-horarios">Seleccioná una fecha</p>`;
-
-        if (!profesionalID) return;
-
-        (serviciosMock[profesionalID] || []).forEach(s => {
-            const op = document.createElement("option");
-            op.value = s.id;
-            op.textContent = s.nombre;
-            selectServicio.appendChild(op);
-        });
-    });
-
-    // carga de horarios x fecha
-    inputFecha.addEventListener("change", () => {
+        const servicioID = selectServicio.value;
         const fecha = inputFecha.value;
+
         gridHorarios.innerHTML = "";
 
-        if (!fecha) return;
 
-        obtenerHorariosMock().forEach(hora => {
-            const div = document.createElement("div");
-            div.classList.add("horario");
-            div.textContent = hora;
+        if (!profesionalID || !servicioID || !fecha) {
+        gridHorarios.innerHTML = `<p class="placeholder-horarios">Seleccioná un día para ver los horarios disponibles</p>`;
+            return;
+        }
 
-            div.addEventListener("click", () => {
-                document.querySelectorAll(".horario").forEach(h => h.classList.remove("selected"));
-                div.classList.add("selected");
+        const diaSemana = obtenerDiaSemana(fecha);
+        if (!diaSemana) {
+            gridHorarios.innerHTML = `<p class="placeholder-horarios">Fecha inválida.</p>`;
+            return;
+        }
+
+        const servicio = servicios.find(s => String(s.id) === String(servicioID));
+        if (!servicio) {
+            gridHorarios.innerHTML = `<p class="placeholder-horarios">No se encontró la duración del servicio.</p>`;
+            return;
+        }
+
+        try {
+            const resDisp = await apiGet(`/disponibilidades?profesional_id=${profesionalID}`);
+
+            if (!resDisp.ok || resDisp.error) {
+                console.error("Error obteniendo disponibilidades:", resDisp.error);
+                gridHorarios.innerHTML = `<p class="placeholder-horarios">No fue posible obtener los horarios.</p>`;
+                return;
+            }
+
+            const listaDisp = Array.isArray(resDisp.data) ? resDisp.data : [];
+            const dispDia = listaDisp.find(d => d.dia_semana?.toLowerCase() === diaSemana);
+
+            if (!dispDia) {
+                gridHorarios.innerHTML = `<p class="placeholder-horarios">Este profesional no tiene horarios disponibles ese día.</p>`;
+                return;
+            }
+
+            const horarios = generarHorarios(
+                dispDia.hora_inicio,
+                dispDia.hora_fin,
+                servicio.duracion_turno_min
+            );
+
+            if (!horarios.length) {
+                gridHorarios.innerHTML = `<p class="placeholder-horarios">No hay horarios disponibles para ese día.</p>`;
+                return;
+            }
+
+            horarios.forEach(hora => {
+                const div = document.createElement("div");
+                div.classList.add("horario");
+                div.textContent = hora;
+
+                div.addEventListener("click", () => {
+                    document.querySelectorAll(".horario").forEach(h => h.classList.remove("selected"));
+                    div.classList.add("selected");
+                });
+
+                gridHorarios.appendChild(div);
             });
 
-            gridHorarios.appendChild(div);
-        });
+        } catch (err) {
+            console.error("Error inesperado cargando horarios:", err);
+            gridHorarios.innerHTML = `<p class="placeholder-horarios">Ocurrió un error al obtener los horarios.</p>`;
+        }
+    }
+
+    // Eventos
+
+    // Cambio de negocio/recargar profesionales y servicios
+    selectNegocio.addEventListener("change", () => {
+        const idNegocio = selectNegocio.value;
+        cargarProfesionalesYServicios(idNegocio);
     });
 
-    // Boton sig. 
+    // Si cambia profesional o servicio y ya hay fecha, recalculamos horarios
+    selectProfesional.addEventListener("change", () => {
+        if (inputFecha.value) {
+            cargarHorarios();
+        } else {
+            gridHorarios.innerHTML = `<p class="placeholder-horarios">Seleccioná una fecha para ver los horarios disponibles</p>`;
+        }
+    });
+
+    selectServicio.addEventListener("change", () => {
+        if (inputFecha.value) {
+            cargarHorarios();
+        } else {
+            gridHorarios.innerHTML = `<p class="placeholder-horarios">Seleccioná una fecha para ver los horarios disponibles</p>`;
+        }
+    });
+
+    // Cambio de fecha/ recalcular horarios
+    inputFecha.addEventListener("change", () => {
+        cargarHorarios();
+    });
+
+    // Boton siguiente
     form.addEventListener("submit", (e) => {
         e.preventDefault();
 
@@ -124,4 +249,5 @@ document.addEventListener("DOMContentLoaded", () => {
         window.location.href = url;
     });
 
+    cargarNegocios();
 });
