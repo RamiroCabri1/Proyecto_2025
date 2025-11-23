@@ -1,49 +1,74 @@
-console.log("consultar-turno.js cargado.");
+import { apiGet, apiPut } from "../core/api.js";
 
-document.addEventListener("DOMContentLoaded", () => {
 
-    const form = document.getElementById("form-consulta-turno");
-    const inputCodigo = document.getElementById("codigo");
-    const mensajeError = document.getElementById("mensaje-error");
+document.addEventListener("DOMContentLoaded", async () => {
+    console.log("consultar-turno.js cargado.");
 
-    // Turnos de mentiritas a cambiar
-    const turnosMock = [
-        { codigo: "TUR-000123", nombre: "Ana Lopez", profesional: "Maria Perez", servicio: "Color", fecha: "2025-02-15", horario: "10:00" },
-        { codigo: "TUR-000456", nombre: "Carlos Diaz", profesional: "Carolina Diaz", servicio: "Masajes", fecha: "2025-02-18", horario: "15:30" },
-        { codigo: "TUR-000789", nombre: "Laura Gomez", profesional: "Julieta Romero", servicio: "Depilación", fecha: "2025-02-22", horario: "09:30" }
-    ];
+    //leer el ID del turno, lo sacamos de localstorage
+    const turnoGuardado = JSON.parse(localStorage.getItem("turnoEnProceso"));
+    if (!turnoGuardado) {
+        alert("No se encontró información del turno.");
+        window.location.href = "./clientes-turno.html";
+        return;
+    }
 
-    // Submit
-    form.addEventListener("submit", (e) => {
-        e.preventDefault();
+    const turno_id = turnoGuardado.id;
 
-        const codigoIngresado = inputCodigo.value.trim().toUpperCase();
 
-        mensajeError.textContent = "";
-        mensajeError.style.display = "none";
+    // Pedimos turno a backend
+    const resTurno = await apiGet(`/turnos?id=${turno_id}`);
 
-        // Validacion
-        const regex = /^TUR-\d{6}$/;
-        if (!regex.test(codigoIngresado)) {
-            mensajeError.textContent = "El formato del código no es válido (Ej: TUR-000123).";
-            mensajeError.style.display = "block";
+    if (!resTurno.ok || resTurno.error || !resTurno.data?.length) {
+        alert("No se pudo obtener los datos del turno.");
+        console.error("Error turno:", resTurno);
+        return;
+    }
+
+    const turno = resTurno.data[0];
+
+    // Moidificado. Toda la seccion mock reemplazada para que pida datos reales
+
+    
+    document.getElementById("codigo-turno").textContent =
+        turnoGuardado.codigo || "-";
+    //datos reales del turno mostramos ya me olvide de como hablar
+    document.getElementById("cliente-nombre").textContent = turno.cliente_nombre;
+    document.getElementById("profesional-nombre").textContent = turno.profesional_nombre;
+    document.getElementById("servicio-nombre").textContent = turno.servicio_nombre;
+
+    //backend devuelve fehca y hora
+    const [fechaReal, horaReal] = turno.fecha_hora.split(" ");
+
+    document.getElementById("turno-fecha").textContent = fechaReal;  
+    document.getElementById("turno-horario").textContent = horaReal;  
+
+    document.getElementById("estado-turno").textContent = turno.estado;
+
+    // Cancelar turno
+
+    const btnCancelar = document.querySelector(".btn.cancelar");
+
+    btnCancelar.addEventListener("click", async () => {
+        const confirmacion = confirm("¿Seguro que querés cancelar el turno?");
+
+        if (!confirmacion) return;
+
+        const resCancel = await apiPut(`/turnos?id=${turno_id}`, { estado: "Cancelado" });
+
+        if (!resCancel.ok || resCancel.error) {
+            alert("No se pudo cancelar el turno.");
+            console.error(resCancel);
             return;
         }
 
-        // Buscar turno en mock
-        const turno = turnosMock.find(t => t.codigo === codigoIngresado);
+        const actualizado = { 
+            ...turnoGuardado, 
+            estado: "Cancelado"
+        };
 
-        if (!turno) {
-            mensajeError.textContent = "No se encontró ningún turno con ese código.";
-            mensajeError.style.display = "block";
-            return;
-        }
+        localStorage.setItem("turnoEnProceso", JSON.stringify(actualizado));
 
-        // Aca guardamos el turno encontrado para mostrarlo en la página de detalle
-        localStorage.setItem("turnoConsultado", JSON.stringify(turno));
-
-        // Redirigir al detalle
-        window.location.href = `clientes-turno-detalle.html?codigo=${codigoIngresado}`;
+        alert("Tu turno fue cancelado.");
     });
 
 });
