@@ -30,9 +30,7 @@
         <div class="turno-container">
             <h1>Ingresar datos personales <span class="paso">(Paso 2 de 2)</span></h1>
 
-            <p class="resumen-turno">
-                Estás reservando con <strong>María Pérez</strong> para <strong>Color</strong> el día <strong>12/11 a las 10:00</strong>.
-            </p>
+            <p id="resumen-turno" class="resumen-turno"></p>
 
             <form id="form-datos-turno">
                 <div class="form-row">
@@ -66,6 +64,8 @@
                 <input type="hidden" id="servicio_id" name="servicio_id">
                 <input type="hidden" id="horario" name="horario">
                 <input type="hidden" id="negocio_id" name="negocio_id">
+                <input type="hidden" id="fecha" name="fecha">
+
 
                 <button type="submit" class="btn reservar">Confirmar turno</button>
             </form>

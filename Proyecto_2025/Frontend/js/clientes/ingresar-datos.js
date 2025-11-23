@@ -1,4 +1,4 @@
-import { apiGet, apiPut } from "../core/api.js";
+import { apiGet, apiPost, apiPut } from "../core/api.js";
 
 document.addEventListener("DOMContentLoaded", () => {
     console.log("ingresar-datos.js cargado");
@@ -18,8 +18,27 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("servicio_id").value = servicio_id;
     document.getElementById("horario").value = horario;
     document.getElementById("negocio_id").value = negocio_id;
+    document.getElementById("fecha").value = fecha;
 
-    form.addEventListener("submit", (e) => {
+    async function cargarResumen() {
+    const profRes = await apiGet(`/profesionales?id=${profesional_id}`);
+    const servRes = await apiGet(`/servicios?id=${servicio_id}`);
+
+    const profesional = profRes.data?.[0]?.nombre || "Profesional";
+    const servicio = servRes.data?.[0]?.nombre || "Servicio";
+
+    const resumen = document.getElementById("resumen-turno");
+    resumen.innerHTML = `
+        Estás reservando con <strong>${profesional}</strong> para 
+        <strong>${servicio}</strong> el día 
+        <strong>${fecha} a las ${horario}</strong>.
+    `;
+}
+
+cargarResumen();
+
+
+    form.addEventListener("submit", async (e) => {
         e.preventDefault();
 
         // datos del cliente
@@ -29,53 +48,49 @@ document.addEventListener("DOMContentLoaded", () => {
         const telefono = document.getElementById("telefono").value.trim();
         const email = document.getElementById("email").value.trim();
 
-        // Datos mock para ejemplooooooo
-        const profesionalesMock = {
-            "101": "María Pérez",
-            "102": "Carolina Díaz",
-            "201": "Julieta Romero",
-            "301": "Fabián Torres"
+         // Crear/actualizar cliente
+        const clientePayload = {
+            nombre,
+            apellido,
+            dni,
+            telefono,
+            email,
+            negocio_id: Number(negocio_id)
         };
 
-        const serviciosMock = {
-            "1": "Masajes",
-            "2": "Color",
-            "3": "Limpieza Facial",
-            "4": "Depilación",
-            "5": "Pestañas",
-            "6": "Kinesiología Deportiva"
+        const resCliente = await apiPut("/clientes", clientePayload);
+
+        if (!resCliente.ok || resCliente.error) {
+            alert("No se pudo registrar el cliente.");
+            console.error(resCliente);
+            return;
+        }
+
+        const cliente_id = resCliente.data?.id || resCliente.id;
+
+        // Crear fecha_hora
+        const fecha_hora = `${fecha} ${horario}`;
+        
+         // Crear turno
+        const turnoPayload = {
+            fecha_hora,
+            cliente_id,
+            profesional_id: Number(profesional_id),
+            servicio_id: Number(servicio_id),
+            negocio_id: Number(negocio_id)
         };
 
-        // OBJETO final del turno
-        const turnoCompleto = {
-            cliente_nombre: `${nombre} ${apellido}`,
-            cliente_dni: dni,
-            cliente_telefono: telefono,
-            cliente_email: email,
+        const resTurno = await apiPost("/turnos", turnoPayload);
 
-            profesional_id,
-            profesional_nombre: profesionalesMock[profesional_id] || "—",
+            if (!resTurno.ok || resTurno.error) {
+                alert("No se pudo crear el turno.");
+                console.error(resTurno);
+                return;
+            }
 
-            servicio_id,
-            servicio_nombre: serviciosMock[servicio_id] || "—",
+          // Guardamos para la pantalla final
+        localStorage.setItem("turnoEnProceso", JSON.stringify(resTurno.data || resTurno));
 
-            fecha,
-            horario,
-            negocio_id,
-
-
-            //esto es lo que les decia que convierte el ID en un codigo, es hermosoooo
-            codigo: "TUR-" + Math.floor(100000 + Math.random() * 900000),
-            estado: "Pendiente"
-        };
-
-        // Guardar turno final
-        localStorage.setItem("turnoEnProceso", JSON.stringify(turnoCompleto));
-
-        console.log("Turno guardado:", turnoCompleto);
-
-        // Redirigir
         window.location.href = "./clientes-turno-detalle.html";
     });
 });
-
