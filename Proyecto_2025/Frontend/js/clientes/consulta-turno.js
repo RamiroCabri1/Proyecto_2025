@@ -1,74 +1,36 @@
-import { apiGet, apiPut } from "../core/api.js";
+import { apiGet } from "../core/api.js";
 
+document.addEventListener("DOMContentLoaded", () => {
+    console.log("consulta-turno.js cargado correctamente ✔");
 
-document.addEventListener("DOMContentLoaded", async () => {
-    console.log("consultar-turno.js cargado.");
+    const form = document.getElementById("form-consulta-turno");
+    const inputCodigo = document.getElementById("codigo");
+    const mensajeError = document.getElementById("mensaje-error");
 
-    //leer el ID del turno, lo sacamos de localstorage
-    const turnoGuardado = JSON.parse(localStorage.getItem("turnoEnProceso"));
-    if (!turnoGuardado) {
-        alert("No se encontró información del turno.");
-        window.location.href = "./clientes-turno.html";
-        return;
-    }
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
 
-    const turno_id = turnoGuardado.id;
+        const codigoIngresado = inputCodigo.value.trim();
 
-
-    // Pedimos turno a backend
-    const resTurno = await apiGet(`/turnos?id=${turno_id}`);
-
-    if (!resTurno.ok || resTurno.error || !resTurno.data?.length) {
-        alert("No se pudo obtener los datos del turno.");
-        console.error("Error turno:", resTurno);
-        return;
-    }
-
-    const turno = resTurno.data[0];
-
-    // Moidificado. Toda la seccion mock reemplazada para que pida datos reales
-
-    
-    document.getElementById("codigo-turno").textContent =
-        turnoGuardado.codigo || "-";
-    //datos reales del turno mostramos ya me olvide de como hablar
-    document.getElementById("cliente-nombre").textContent = turno.cliente_nombre;
-    document.getElementById("profesional-nombre").textContent = turno.profesional_nombre;
-    document.getElementById("servicio-nombre").textContent = turno.servicio_nombre;
-
-    //backend devuelve fehca y hora
-    const [fechaReal, horaReal] = turno.fecha_hora.split(" ");
-
-    document.getElementById("turno-fecha").textContent = fechaReal;  
-    document.getElementById("turno-horario").textContent = horaReal;  
-
-    document.getElementById("estado-turno").textContent = turno.estado;
-
-    // Cancelar turno
-
-    const btnCancelar = document.querySelector(".btn.cancelar");
-
-    btnCancelar.addEventListener("click", async () => {
-        const confirmacion = confirm("¿Seguro que querés cancelar el turno?");
-
-        if (!confirmacion) return;
-
-        const resCancel = await apiPut(`/turnos?id=${turno_id}`, { estado: "Cancelado" });
-
-        if (!resCancel.ok || resCancel.error) {
-            alert("No se pudo cancelar el turno.");
-            console.error(resCancel);
+        if (!codigoIngresado) {
+            mensajeError.textContent = "Ingresá un código válido.";
             return;
         }
 
-        const actualizado = { 
-            ...turnoGuardado, 
-            estado: "Cancelado"
-        };
+        // buscamos turno x codigo
+        const res = await apiGet(`/turnos?codigo=${codigoIngresado}`);
 
-        localStorage.setItem("turnoEnProceso", JSON.stringify(actualizado));
+        if (!res.ok || res.error || !res.data?.length) {
+            mensajeError.textContent = "No se encontró ningún turno con ese código.";
+            return;
+        }
 
-        alert("Tu turno fue cancelado.");
+        const turno = res.data[0];
+
+        // Guardar en localStorage para usarlo en detalles
+        localStorage.setItem("turnoEnProceso", JSON.stringify(turno));
+
+        // Redirigir a la pantalla de detalle
+        window.location.href = "./clientes-turno-detalle.html";
     });
-
 });

@@ -1,41 +1,74 @@
-document.addEventListener("DOMContentLoaded", () => {
-    console.log("turno-detalle.js cargado.");
+import { apiGet, apiPut } from "../core/api.js";
 
-    // Obtener turno guardado
-    const turno = JSON.parse(localStorage.getItem("turnoEnProceso"));
 
-    if (!turno) {
+document.addEventListener("DOMContentLoaded", async () => {
+    console.log("consultar-turno.js cargado.");
+
+    //leer el ID del turno, lo sacamos de localstorage
+    const turnoGuardado = JSON.parse(localStorage.getItem("turnoEnProceso"));
+    if (!turnoGuardado) {
         alert("No se encontró información del turno.");
         window.location.href = "./clientes-turno.html";
         return;
     }
 
-    // Mostrar codigooo
-    document.getElementById("codigo-turno").textContent = turno.codigo;
+    const turno_id = turnoGuardado.id;
 
-    // Mostrar datos
+
+    // Pedimos turno a backend
+    const resTurno = await apiGet(`/turnos?id=${turno_id}`);
+
+    if (!resTurno.ok || resTurno.error || !resTurno.data?.length) {
+        alert("No se pudo obtener los datos del turno.");
+        console.error("Error turno:", resTurno);
+        return;
+    }
+
+    const turno = resTurno.data[0];
+
+    // Moidificado. Toda la seccion mock reemplazada para que pida datos reales
+
+    
+    document.getElementById("codigo-turno").textContent =
+        turnoGuardado.codigo || "-";
+    //datos reales del turno mostramos ya me olvide de como hablar
     document.getElementById("cliente-nombre").textContent = turno.cliente_nombre;
     document.getElementById("profesional-nombre").textContent = turno.profesional_nombre;
     document.getElementById("servicio-nombre").textContent = turno.servicio_nombre;
-    document.getElementById("turno-fecha").textContent = turno.fecha;
-    document.getElementById("turno-horario").textContent = turno.horario;
 
-    // Estado (MOCK de mentira)
+    //backend devuelve fehca y hora
+    const fechaCompleta = turno.fecha_hora.replace("T", " ").split(" ");
+    const fechaReal = fechaCompleta[0];
+    const horaReal = fechaCompleta[1];
+    
+    document.getElementById("turno-fecha").textContent = fechaReal;  
+    document.getElementById("turno-horario").textContent = horaReal;  
+
     document.getElementById("estado-turno").textContent = turno.estado;
 
-    // Cancelar turno (mock)
+    // Cancelar turno
+
     const btnCancelar = document.querySelector(".btn.cancelar");
 
-    btnCancelar.addEventListener("click", () => {
+    btnCancelar.addEventListener("click", async () => {
         const confirmacion = confirm("¿Seguro que querés cancelar el turno?");
 
         if (!confirmacion) return;
 
-        // Simulación de cancelación
-        turno.estado = "Cancelado";
-        localStorage.setItem("turnoEnProceso", JSON.stringify(turno));
+        const resCancel = await apiPut(`/turnos?id=${turno_id}`, { estado: "Cancelado" });
 
-        document.getElementById("estado-turno").textContent = "Cancelado";
+        if (!resCancel.ok || resCancel.error) {
+            alert("No se pudo cancelar el turno.");
+            console.error(resCancel);
+            return;
+        }
+
+        const actualizado = { 
+            ...turnoGuardado, 
+            estado: "Cancelado"
+        };
+
+        localStorage.setItem("turnoEnProceso", JSON.stringify(actualizado));
 
         alert("Tu turno fue cancelado.");
     });
