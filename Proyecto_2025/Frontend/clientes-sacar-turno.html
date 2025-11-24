@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/style.css">
+    <title>Turn-e | Turnos </title>
+    <link rel="icon" type="image/png" href="assets/logo2.png">
+</head>
+
+<body>
+
+    <header>
+            <a href="./index.html" class="brand">
+                <img src="./assets/logo.png" alt="Turn-e Logo" class="logo-img">
+            </a>
+        <nav class="header-nav">
+            <ul>
+                <li><a href="./index.html">Inicio</a></li>
+                <li><a href="./clientes-turno.html">Portal clientes</a></li>   
+                <li><a href="./login-profesionales.html">Portal Profesionales</a></li>
+
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="turno-container">
+            <h1>Seleccionar turno (Paso 1 de 2)</h1>
+
+            <form>
+                <div class="form-group">
+                    <label for="negocio">Negocio</label>
+                    <select id="negocio">
+                        <option value="">Seleccionar negocio</option>
+                        <option value="1">Beauty & Spa</option>
+                        <option value="2">Estética Punta Alta</option>
+                        <option value="3">Kinesiología Bahía</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="profesional">Profesional</label>
+                        <select id="profesional">
+                            <option value="">Seleccionar profesional</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="servicio">Servicio</label>
+                        <select id="servicio">
+                            <option value="">Seleccionar servicio</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="fecha">Seleccionar fecha</label>
+                    <input type="date" id="fecha" name="fecha" required>
+                </div>
+
+                <h2>Horarios disponibles</h2>
+                <div class="horarios-grid" id="horarios-grid">
+                    <p class="placeholder-horarios">Seleccioná un día para ver los horarios disponibles</p>
+                </div>
+
+                <button type="submit" class="btn reservar">Siguiente</button>
+            </form>
+        </div>
+    </main>
+
+<script type="module" src="./js/core/api.js"></script>
+<script type="module" src="./js/clientes/sacar-turno.js"></script>
+
+</body>
+</html>

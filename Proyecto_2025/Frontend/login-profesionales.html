@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/style.css">
+    <title>Turn-e | Login Profesionales</title>
+    <link rel="icon" type="image/png" href="assets/logo2.png">
+</head>
+
+<body>
+
+    <header>
+        <a href="./index.html" class="brand">
+            <img src="./assets/logo.png" alt="Turn-e Logo" class="logo-img" />
+            
+        </a>
+
+        <nav class="header-nav">
+            <ul>
+                <li><a href="./index.html">Inicio</a></li>
+                <li><a href="./clientes-turno.html">Portal Cliente</a></li>
+                <li><a href="./login-profesionales.html" aria-current="page">Portal Profesionales</a></li>
+            </ul>
+        </nav>
+    </header>
+
+<main class="login-container">
+    <h1>Portal de Profesionales</h1>
+
+    <form id="form-login-profesionales" method="post" action="#" novalidate>
+        <div class="form-group">
+            <label for="email">E-mail</label>
+            <input 
+                type="email" 
+                id="email" 
+                name="email" 
+                placeholder="tuemail@ejemplo.com" 
+                autocomplete="username" 
+                required
+            />
+        </div>
+
+        <div class="form-group">
+            <label for="password">Contraseña</label>
+            <input 
+                type="password" 
+                id="password" 
+                name="password" 
+                placeholder="********" 
+                autocomplete="current-password" 
+                required
+        />
+        </div>
+
+        <button type="submit" class="btn">Iniciar sesión</button>
+        <p class="error-msg" id="error-message" hidden>Usuario o contraseña incorrectos.</p>
+
+
+        <p class="note">
+            ¿No estás registrado?
+        <a href="./registro-profesionales.html" rel="nofollow">Registrarme</a>
+</p>
+
+
+    </form>
+</main>
+
+<script src="./js/auth/login-profesionales.js" type="module"></script>
+
+</body>
+</html>
