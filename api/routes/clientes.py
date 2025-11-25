@@ -1,158 +1,72 @@
-from api.utils import token_required
+
 from flask import Blueprint, jsonify, request
+from api.utils import token_required, validar_campos
 from api.models.cliente import Cliente
-from api.db.db import mysql
 
-# Creamos el "plano" (blueprint) de clientes
+
+
+
+
+
 clientes_bp = Blueprint('clientes', __name__)
-
-# GET Todos
+# GET Todos (Filtrado por Negocio)
 @clientes_bp.route('/clientes', methods=['GET'])
 @token_required
+
 def get_clientes():
-    cursor = None
     try:
-        cursor = mysql.connection.cursor() 
-        cursor.execute("SELECT * FROM Clientes") 
-        filas = cursor.fetchall()
+        negocio_id_del_token = request.negocio_id
         
-        lista_clientes = []
-        for fila in filas:
-            objCliente = Cliente(fila) 
-            lista_clientes.append(objCliente.to_json()) 
-            
-        return jsonify(lista_clientes)
+        lista_objetos = Cliente.obtener_todos(negocio_id_del_token)
+        lista_json = [c.to_json() for c in lista_objetos]
+        
+        return jsonify(lista_json), 200
     except Exception as err:
         return jsonify({"error": str(err)}), 500
-    finally:
-        if cursor:
-            cursor.close()
+    
 
-# GET por ID
+# GET por ID (lo dejamos público para el comprobante)
 @clientes_bp.route('/clientes/<int:id>', methods=['GET'])
-@token_required
+
 def get_cliente_por_id(id):
-    cursor = None
     try:
-        cursor = mysql.connection.cursor() 
-        sql = "SELECT * FROM Clientes WHERE id = %s"
-        cursor.execute(sql, (id,))
-        fila = cursor.fetchone() 
-        
-        if fila:
-            objCliente = Cliente(fila)
-            return jsonify(objCliente.to_json())
-        else:
-            return jsonify({"error": "Cliente no encontrado"}), 404
+        cliente = Cliente.obtener_por_id(id)
+        if cliente:
+            return jsonify(cliente.to_json()), 200
+        return jsonify({"error": "Cliente no encontrado"}), 404
     except Exception as err:
         return jsonify({"error": str(err)}), 500
-    finally:
-        if cursor:
-            cursor.close()
+    
 
-# POST (Crear)
+# POST (Crear) - (publico para que la gente se registre sola)
 @clientes_bp.route('/clientes', methods=['POST'])
-#@token_required
+
 def create_cliente():
     datos = request.get_json()
     
-    
-    campos_requeridos = ['nombre', 'dni', 'telefono', 'negocio_id']
-    if not datos or not all(campo in datos for campo in campos_requeridos):
-        return jsonify({"error": f"Faltan datos. Se requiere: {campos_requeridos}"}), 400
+    # Validación simple
+    if not validar_campos(datos, ['nombre', 'dni', 'telefono', 'negocio_id']):
+        return jsonify({"error": "Faltan datos obligatorios (nombre, dni, telefono, negocio_id)"}), 400
 
-    nombre = datos['nombre']
-    dni = datos['dni']
-    telefono = datos['telefono']
-    negocio_id = datos['negocio_id']
-    apellido = datos.get('apellido')
-    email = datos.get('email')
-
-    cursor = None
     try:
-        cursor = mysql.connection.cursor()
-        sql = "INSERT INTO Clientes (nombre, apellido, dni, telefono, email, negocio_id) VALUES (%s, %s, %s, %s, %s, %s)"
-        valores = (nombre, apellido, dni, telefono, email, negocio_id)
-        
-        cursor.execute(sql, valores)
-        mysql.connection.commit()
-        
-        nuevo_id = cursor.lastrowid
-        
-        nuevo_cliente = {
-            "id": nuevo_id, "nombre": nombre, "apellido": apellido, "dni": dni,
-            "telefono": telefono, "email": email, "negocio_id": negocio_id
-        }
-        return jsonify(nuevo_cliente), 201
+        nuevo_cliente = Cliente.crear_desde_datos(datos)
+        return jsonify(nuevo_cliente.to_json()), 201
+
+    except ValueError as ve:
+        return jsonify({"error": str(ve)}), 409 # 409 Conflict (DNI duplicado)
     except Exception as err:
-        # Manejamos el error si el DNI ya existe (No puede haber dos clientes distintos con el mismo dni)
-        if "1062" in str(err): 
-            return jsonify({"error": "Ya existe un cliente con ese DNI para este negocio"}), 409
-        else:
-            return jsonify({"error": str(err)}), 500
-    finally:
-        if cursor:
-            cursor.close()
+        return jsonify({"error": str(err)}), 500
 
-# PUT (Actualizar)
-@clientes_bp.route('/clientes/<int:id>', methods=['PUT'])
-@token_required
-def update_cliente(id):
-    cursor = None
-    try:
-        datos = request.get_json()
-        campos_requeridos = ['nombre', 'dni', 'telefono', 'negocio_id']
-        if not datos or not all(campo in datos for campo in campos_requeridos):
-            return jsonify({"error": f"Faltan datos. Se requiere: {campos_requeridos}"}), 400
-
-        nombre = datos['nombre']
-        dni = datos['dni']
-        telefono = datos['telefono']
-        negocio_id = datos['negocio_id']
-        apellido = datos.get('apellido')
-        email = datos.get('email')
-
-        cursor = mysql.connection.cursor()
-        sql = "UPDATE Clientes SET nombre = %s, apellido = %s, dni = %s, telefono = %s, email = %s, negocio_id = %s WHERE id = %s"
-        valores = (nombre, apellido, dni, telefono, email, negocio_id, id)
-        
-        cursor.execute(sql, valores)
-        mysql.connection.commit()
-
-        if cursor.rowcount == 0:
-            return jsonify({"error": "Cliente no encontrado"}), 404
-        else:
-            cliente_actualizado = {
-                "id": id, "nombre": nombre, "apellido": apellido, "dni": dni,
-                "telefono": telefono, "email": email, "negocio_id": negocio_id
-            }
-            return jsonify(cliente_actualizado), 200
-    except Exception as err:
-        if "1062" in str(err):
-            return jsonify({"error": "Ya existe un cliente con ese DNI para este negocio"}), 409
-        else:
-            return jsonify({"error": str(err)}), 500
-    finally:
-        if cursor:
-            cursor.close()
-
-# DELETE
+# DELETE (borrar privado)
 @clientes_bp.route('/clientes/<int:id>', methods=['DELETE'])
 @token_required
 def delete_cliente(id):
-    cursor = None
-    try:
-        cursor = mysql.connection.cursor()
-        sql = "DELETE FROM Clientes WHERE id = %s"
-        cursor.execute(sql, (id,))
-        mysql.connection.commit()
 
-        if cursor.rowcount == 0:
-            return jsonify({"error": "Cliente no encontrado"}), 404
-        else:
-            return jsonify({"message": "Cliente eliminado correctamente"}), 200
+    try:
+        filas = Cliente.eliminar(id)
+        if filas > 0:
+            return jsonify({"message": "Cliente eliminado"}), 200
+        return jsonify({"error": "Cliente no encontrado"}), 404
     except Exception as err:
         return jsonify({"error": str(err)}), 500
-    finally:
-        if cursor:
-            cursor.close()
+    

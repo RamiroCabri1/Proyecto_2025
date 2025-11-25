@@ -4,14 +4,30 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("dashboard-servicios.js cargado.");
     
     const tablaBody = document.getElementById("servicios-body");
-
     const btnAbrirModal = document.getElementById("btn-agregar-servicio");
     const modal = document.getElementById("modal-servicio");
     const btnCerrarModal = document.getElementById("cerrar-modal");
     const formServicio = document.getElementById("form-servicio");
 
-    // Función para llenar la tabla con datos reales (Osea digamos mi base de datos)
+    // --- 1. CARGAR (GET) ---
+    async function cargarServicios() {
+        try {
+            const res = await apiGet("/servicios"); // Pide al backend
+
+            if (res.status === 200) {
+                renderTabla(res.data); // Dibuja lo que viene del backend
+            } else {
+                console.error("Error cargando servicios:", res);
+            }
+        } catch (error) {
+            console.error("Error critico:", error);
+        }
+    }
+
     function renderTabla(servicios){
+        // Si no hay tbody, salimos
+        if (!tablaBody) return;
+        
         tablaBody.innerHTML = "";
 
         servicios.forEach(servicio => {
@@ -22,81 +38,44 @@ document.addEventListener("DOMContentLoaded", () => {
             <td>${servicio.duracion_turno_min} min</td>
             <td>${servicio.descripcion || '-'}</td> 
             <td>
-                <a href="#" class="accion-cancelar" data-id="${servicio.id}" style="color: red; font-weight: bold;">Eliminar</a>
+                <a href="#" class="accion-cancelar" data-id="${servicio.id}" style="color: red; font-weight: bold; cursor: pointer;">Eliminar</a>
             </td>
         `;
-
         tablaBody.appendChild(fila);
         });
 
-        // Conectamos los botones recién creados
         activarBotonesEliminar();
     }
 
-    // Función para activar los clics de eliminar
+    // --- 2. ELIMINAR (DELETE) ---
     function activarBotonesEliminar() {
         const botones = document.querySelectorAll(".accion-cancelar");
-
         botones.forEach(btn => {
             btn.addEventListener("click", async (e) => {
-                e.preventDefault(); // Evita que salte la página
+                e.preventDefault();
                 const id = e.target.dataset.id;
-
-                if(confirm(`¿Seguro que querés eliminar el servicio ID ${id}?`)) {
-                    try {
-                        const res = await apiDelete(`/servicios/${id}`);
-                        
-                        if (res.status === 200) {
-                            alert("Servicio eliminado correctamente.");
-                            cargarServicios(); // Recargamos la tabla
-                        } else {
-                            alert("Error al eliminar: " + (res.data.error || "Desconocido"));
-                        }
-                    } catch (error) {
-                        console.error("Error eliminando:", error);
-                    }
+                if(confirm(`¿Eliminar servicio ID ${id}?`)) {
+                    const res = await apiDelete(`/servicios/${id}`);
+                    if (res.status === 200) cargarServicios();
+                    else alert("Error al eliminar");
                 }
             });
         });
     }
 
-    // Función ASYNC para pedir los datos al Backend
-    async function cargarServicios() {
-        try {
-            const res = await apiGet("/servicios");
-
-            if (res.status === 200) {
-                renderTabla(res.data);
-            } else {
-                console.error("Error:", res);
-            }
-        } catch (error) {
-            console.error("Error grave:", error);
-        }
-    }
-function abrirModal(){
-        console.log("¡Hiciste clic en el botón!");
-        modal.style.display = "block";
-    }
-
-    function cerrarModal(){
-        modal.style.display="none";
-    }
-
-// Lógica de crear servicio
+    // --- 3. CREAR (POST) ---
     if(formServicio) {
         formServicio.addEventListener("submit", async (e) => {
-            e.preventDefault(); // Frenamos el recargo de página
-
-            // Capturamos los datos usando los IDs que encontramos
-            const nombre = document.getElementById("nombre-servicio").value.trim();
-            const descripcion = document.getElementById("descripcion-servicio").value.trim();
+            e.preventDefault();
+            
+            // IDs del HTML (Asegurate que coincidan)
+            const nombre = document.getElementById("nombre-servicio").value;
+            // Si tu html dice precio-servicio cambialo acá:
+            const descripcion = document.getElementById("descripcion-servicio") ? document.getElementById("descripcion-servicio").value : "-";
             const duracion = document.getElementById("duracion-servicio").value;
             
-            // Obtenemos el ID del negocio (o usamos el 6 que es el mio)
             const negocio_id = localStorage.getItem("negocio_id") || 6;
 
-            // Armamos el paquete para Python
             const nuevoServicio = {
                 nombre: nombre,
                 descripcion: descripcion,
@@ -104,29 +83,23 @@ function abrirModal(){
                 negocio_id: parseInt(negocio_id)
             };
 
-            try {
-                // Enviamos el paquete
-                const res = await apiPost("/servicios", nuevoServicio);
+            const res = await apiPost("/servicios", nuevoServicio);
 
-                if (res.status === 201) { 
-                    alert("Servicio creado con éxito");
-                    
-                    cerrarModal();
-                    formServicio.reset(); // Limpiamos el formulario
-                    cargarServicios();    // Recargamos la tabla para ver el nuevo
-                } else {
-                    alert("Error al crear: " + (res.data.error || "Verificá los datos"));
-                }
-            } catch (error) {
-                console.error(error);
-                alert("Error de conexión");
+            if (res.status === 201) {
+                alert("Creado correctamente");
+                modal.style.display = "none";
+                formServicio.reset();
+                cargarServicios();
+            } else {
+                alert("Error: " + (res.data.error || "Revisá los datos"));
             }
         });
     }
 
-if(btnAbrirModal) btnAbrirModal.addEventListener("click", abrirModal);
-    if(btnCerrarModal) btnCerrarModal.addEventListener("click", cerrarModal);
-    
-    // Ejecutamos
+    // --- MODAL ---
+    if(btnAbrirModal) btnAbrirModal.onclick = () => { if(modal) modal.style.display = "block"; };
+    if(btnCerrarModal) btnCerrarModal.onclick = () => { if(modal) modal.style.display = "none"; };
+
+    // INICIALIZAR
     cargarServicios();
 });

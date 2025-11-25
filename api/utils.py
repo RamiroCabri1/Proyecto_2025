@@ -1,22 +1,22 @@
-# api/utils.py
+
 from functools import wraps
 from flask import request, jsonify
 import jwt
 from api import app 
 
-# Módulo de utilidades para convertir el día de Python a nombre de la DB
+# 1. Función para los días (La que te faltaba)
 def get_dia_nombre(dia_numero):
+    """Convierte el número de día de Python (0-6 o 1-7) a nombre."""
     dias = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"]
     try:
+        # Asumimos que dia_numero viene 1-indexado (Lunes=1)
         return dias[dia_numero - 1] 
     except IndexError:
         return None
 
+# 2. El Guardián (Token)
 def token_required(func):
-    """
-    Este es el decorador que protege las rutas.
-    Verifica que se envíe un token válido en los headers.
-    """
+
     @wraps(func)
     def decorated(*args, **kwargs):
         token = None
@@ -29,6 +29,7 @@ def token_required(func):
 
         try:
             data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
+            request.negocio_id = data.get('negocio_id') # Guardamos el ID para usarlo después
         except jwt.ExpiredSignatureError:
             return jsonify({'message': 'El token ha expirado'}), 401
         except jwt.InvalidTokenError:
@@ -36,13 +37,11 @@ def token_required(func):
 
         return func(*args, **kwargs)
     
-    return decorated # <--- ¡ESTA LÍNEA TIENE QUE ESTAR ACÁ! (Indentada dentro de token_required)
+    return decorated
 
+# 3. Validador de Campos
 def validar_campos(datos, campos_requeridos):
-    """
-    Valida que 'datos' contenga todas las claves de 'campos_requeridos'.
-    Retorna True si está todo ok, False si falta algo.
-    """
+
     if not datos:
         return False
     for campo in campos_requeridos:

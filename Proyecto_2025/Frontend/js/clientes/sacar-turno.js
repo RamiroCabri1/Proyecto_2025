@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     let allServicios = [];
     let horarioSeleccionado = null;
 
-    // 1. Carga inicial de datos
+    // 1. Carga inicial
     try {
         const [resNegocios, resProfesionales, resServicios] = await Promise.all([
             apiGet("/negocios", false),
@@ -22,24 +22,19 @@ document.addEventListener("DOMContentLoaded", async () => {
             apiGet("/servicios", false)
         ]);
 
-        if (resNegocios.status === 200) {
-            llenarSelect(selectNegocio, resNegocios.data, "Seleccionar negocio");
-        }
-
+        if (resNegocios.status === 200) llenarSelect(selectNegocio, resNegocios.data, "Seleccionar negocio");
         if (resProfesionales.status === 200) allProfesionales = resProfesionales.data;
         if (resServicios.status === 200) allServicios = resServicios.data;
 
-    } catch (error) {
-        console.error("Error cargando datos iniciales:", error);
-    }
+    } catch (error) { console.error(error); }
 
-    // 2. Lógica de filtrado por Negocio
+    // 2. Filtrado por Negocio
     selectNegocio.addEventListener("change", () => {
         const negocioId = parseInt(selectNegocio.value);
         
         selectProfesional.innerHTML = '<option value="">Seleccionar profesional</option>';
         selectServicio.innerHTML = '<option value="">Seleccionar servicio</option>';
-        gridHorarios.innerHTML = '<p class="placeholder-horarios">Seleccioná un día para ver los horarios disponibles</p>';
+        gridHorarios.innerHTML = '<p class="placeholder-horarios">Seleccioná un día...</p>';
 
         if (!negocioId) return;
 
@@ -50,27 +45,21 @@ document.addEventListener("DOMContentLoaded", async () => {
         llenarSelect(selectServicio, servsFiltrados);
     });
 
-    // 3. Calculadora de Horarios
+    // 3. Calcular Horarios
     const calcularHorarios = async () => {
-        const profesionalId = selectProfesional.value;
-        const servicioId = selectServicio.value;
-        const fecha = inputFecha.value;
+        const [profId, servId, fecha] = [selectProfesional.value, selectServicio.value, inputFecha.value];
+        if (!profId || !servId || !fecha) return;
 
-        if (!profesionalId || !servicioId || !fecha) return;
-
-        gridHorarios.innerHTML = "Cargando disponibilidad...";
+        gridHorarios.innerHTML = "Cargando...";
 
         try {
             const dateObj = new Date(fecha + "T00:00:00");
             let diaSemana = dateObj.getDay(); 
             if (diaSemana === 0) diaSemana = 7;
 
-            const res = await apiGet(`/profesionales/${profesionalId}/disponibilidad`, false);
+            const res = await apiGet(`/profesionales/${profId}/disponibilidad`, false);
             
-            if (res.status !== 200) {
-                gridHorarios.innerHTML = "Error al consultar disponibilidad.";
-                return;
-            }
+            if (res.status !== 200) { gridHorarios.innerHTML = "Error disponibilidad."; return; }
 
             const horarioDelDia = res.data.find(d => d.dia_semana === diaSemana);
 
@@ -79,34 +68,24 @@ document.addEventListener("DOMContentLoaded", async () => {
                 return;
             }
 
-            const servicioObj = allServicios.find(s => s.id == servicioId);
+            const servicioObj = allServicios.find(s => s.id == servId);
             const duracion = servicioObj ? servicioObj.duracion_turno_min : 60;
 
-            generarBotonesHorarios(horarioDelDia.hora_inicio, horarioDelDia.hora_fin, duracion);
+            generarBotones(horarioDelDia.hora_inicio, horarioDelDia.hora_fin, duracion);
 
-        } catch (error) {
-            console.error(error);
-            gridHorarios.innerHTML = "Error calculando horarios.";
-        }
+        } catch (error) { gridHorarios.innerHTML = "Error."; }
     };
 
-    selectProfesional.addEventListener("change", calcularHorarios);
-    selectServicio.addEventListener("change", calcularHorarios);
-    inputFecha.addEventListener("change", calcularHorarios);
+    [selectProfesional, selectServicio, inputFecha].forEach(el => el.addEventListener("change", calcularHorarios));
 
-
-    // 4. Generador de botones visuales
-    function generarBotonesHorarios(inicioStr, finStr, duracionMin) {
+    // 4. Generar Botones
+    function generarBotones(inicioStr, finStr, duracionMin) {
         gridHorarios.innerHTML = "";
         
-        const aMinutos = (timeStr) => {
-            const [h, m] = timeStr.split(":").map(Number);
-            return h * 60 + m;
-        };
-
-        const aHora = (mins) => {
-            const h = Math.floor(mins / 60).toString().padStart(2, '0');
-            const m = (mins % 60).toString().padStart(2, '0');
+        const aMinutos = (s) => { const [h, m] = s.split(":").map(Number); return h * 60 + m; };
+        const aHora = (min) => {
+            const h = Math.floor(min / 60).toString().padStart(2, '0');
+            const m = (min % 60).toString().padStart(2, '0');
             return `${h}:${m}`;
         };
 
@@ -115,7 +94,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         while (actual + duracionMin <= fin) {
             const horaTexto = aHora(actual);
-            
             const btn = document.createElement("button");
             btn.type = "button"; 
             btn.className = "horario"; 
@@ -126,46 +104,34 @@ document.addEventListener("DOMContentLoaded", async () => {
                 btn.classList.add("selected");
                 horarioSeleccionado = horaTexto;
             };
-
             gridHorarios.appendChild(btn);
             actual += duracionMin;
         }
-
-        if (gridHorarios.innerHTML === "") {
-            gridHorarios.innerHTML = "<p>No hay turnos disponibles en este rango.</p>";
-        }
+        if (gridHorarios.innerHTML === "") gridHorarios.innerHTML = "<p>Sin turnos disponibles.</p>";
     }
 
-    // 5. Submit del formulario
+    // 5. Submit
     form.addEventListener("submit", (e) => {
         e.preventDefault();
-
-        if (!horarioSeleccionado) {
-            alert("Por favor, seleccioná un horario.");
-            return;
-        }
-
-        const fechaCompleta = `${inputFecha.value} ${horarioSeleccionado}:00`;
+        if (!horarioSeleccionado) return alert("Seleccioná un horario.");
 
         const params = new URLSearchParams({
             negocio_id: selectNegocio.value,
             profesional_id: selectProfesional.value,
             servicio_id: selectServicio.value,
-            horario: fechaCompleta
+            horario: `${inputFecha.value} ${horarioSeleccionado}:00`
         });
 
         window.location.href = `clientes-ingresar-datos.html?${params.toString()}`;
     });
 
-    function llenarSelect(select, datos, placeholder) {
-        if(placeholder) select.innerHTML = `<option value="">${placeholder}</option>`;
-        else select.innerHTML = "";
-
+    function llenarSelect(sel, datos, placeholder) {
+        sel.innerHTML = placeholder ? `<option value="">${placeholder}</option>` : "";
         datos.forEach(d => {
-            const option = document.createElement("option");
-            option.value = d.id;
-            option.textContent = d.nombre;
-            select.appendChild(option);
+            const opt = document.createElement("option");
+            opt.value = d.id;
+            opt.textContent = d.nombre;
+            sel.appendChild(opt);
         });
     }
 });

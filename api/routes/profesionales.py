@@ -6,10 +6,24 @@ profesionales_bp = Blueprint('profesionales', __name__)
 
 # GET Todos
 @profesionales_bp.route('/profesionales', methods=['GET'])
-@token_required
+# @token_required  <-- LO SACAMOS PARA QUE SEA PÚBLICO
 def get_profesionales():
     try:
-        lista_objetos = Profesional.obtener_todos()
+        negocio_id = None
+
+        # Intentamos leer el token manualmente para ver si es un Admin
+        if 'x-access-token' in request.headers:
+            token = request.headers['x-access-token']
+            try:
+                from api import app
+                import jwt
+                data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
+                negocio_id = data.get('negocio_id')
+            except:
+                pass # Si el token es inválido, asumimos público (negocio_id = None)
+        
+        # Llamamos al modelo (si negocio_id es None, trae todo; si tiene valor, filtra)
+        lista_objetos = Profesional.obtener_todos(negocio_id)
         lista_json = [p.to_json() for p in lista_objetos]
         
         return jsonify(lista_json), 200

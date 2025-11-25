@@ -78,16 +78,24 @@ class Profesional:
                 cursor.close()
 
     # --- LÓGICA DE LECTURA ---
-
+    
     @classmethod
-    def obtener_todos(cls) -> List['Profesional']:
+    def obtener_todos(cls, negocio_id: int = None) -> List['Profesional']:
         """
-        Retorna lista de objetos Profesional.
+        Si recibe negocio_id, filtra. Si es None, devuelve TODOS (para el público).
         """
         cursor = None
         try:
             cursor = mysql.connection.cursor() 
-            cursor.execute("SELECT * FROM Profesionales") 
+            
+            if negocio_id:
+                sql = "SELECT * FROM Profesionales WHERE negocio_id = %s"
+                cursor.execute(sql, (negocio_id,))
+            else:
+                # Si no hay ID, traemos todo (para que filtre el frontend público)
+                sql = "SELECT * FROM Profesionales"
+                cursor.execute(sql)
+                
             filas = cursor.fetchall()
             
             lista = []

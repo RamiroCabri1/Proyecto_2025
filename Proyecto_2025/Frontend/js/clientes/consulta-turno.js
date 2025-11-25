@@ -3,33 +3,39 @@ import { apiGet } from "../core/api.js";
 document.addEventListener("DOMContentLoaded", () => {
     console.log("consulta-turno.js cargado.");
 
-    const form = document.querySelector("form"); 
-    
-    if (form) {
+    const form = document.getElementById("form-consulta-turno");
+    const inputCodigo = document.getElementById("codigo");
+    const mensajeError = document.getElementById("mensaje-error");
+
+    if(form) {
         form.addEventListener("submit", async (e) => {
             e.preventDefault();
 
-            const inputCodigo = document.querySelector("input[type='text']"); 
-            const codigoIngresado = inputCodigo.value.trim();
+            // Limpiamos el ID: si el usuario pone "TUR-5", nos quedamos solo con "5"
+            let codigoIngresado = inputCodigo.value.trim();
+            if (codigoIngresado.toUpperCase().startsWith("TUR-")) {
+                codigoIngresado = codigoIngresado.replace("TUR-", "");
+            }
 
             if (!codigoIngresado) {
-                alert("Ingresá un código válido.");
+                if(mensajeError) mensajeError.textContent = "Ingresá un código válido.";
                 return;
             }
 
             try {
-                // preguntamos a la BD si existe
+                // 1. Preguntamos a la BD si existe (Endpoint Público)
                 const res = await apiGet(`/turnos/${codigoIngresado}`, false);
 
                 if (res.status === 200) {
                     
-                    // vamos a compartir el turno
+                    // 2. Guardamos SOLO el ID en la caja compartida "turnoCreadoId"
                     localStorage.setItem("turnoCreadoId", codigoIngresado);
                     
-                    // reutilizamos la pagina de detalle turno
+                    // 3. Viajamos a la página de detalle
                     window.location.href = "clientes-turno-detalle.html";
                 } else {
-                    alert("No se encontró ningún turno con ese código.");
+                    if(mensajeError) mensajeError.textContent = "No se encontró ningún turno con ese código.";
+                    else alert("Turno no encontrado");
                 }
 
             } catch (error) {

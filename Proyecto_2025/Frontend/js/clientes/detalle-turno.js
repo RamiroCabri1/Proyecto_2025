@@ -3,34 +3,34 @@ import { apiGet, apiDelete } from "../core/api.js";
 document.addEventListener("DOMContentLoaded", async () => {
     console.log("detalle-turno.js cargado.");
 
+    // 1. Recuperamos el ID del turno
     const turnoId = localStorage.getItem("turnoCreadoId");
 
     if (!turnoId) {
-        alert("No hay información del turno. Volviendo al inicio.");
+        alert("No hay turno seleccionado. Volviendo al inicio.");
         window.location.href = "clientes-turno.html";
         return;
     }
 
-    console.log("Mostrando turno ID:", turnoId);
+    console.log("Cargando Turno ID:", turnoId);
 
-    // Pedimos los datos frescos a la BD
+    // 2. Pedimos los datos frescos al Backend
     try {
         const res = await apiGet(`/turnos/${turnoId}`, false);
 
         if (res.status === 200) {
             const turno = res.data;
-            renderizarDetalle(turno);
+            await renderizarDetalle(turno);
         } else {
             console.error("Error:", res);
-            document.querySelector("main").innerHTML = "<h2 style='text-align:center; color:red;'>Error: El turno ya no existe o fue borrado.</h2>";
-            localStorage.removeItem("turnoCreadoId");
+            document.querySelector("main").innerHTML = "<h2 style='text-align:center; color:red; margin-top: 2rem;'>No se encontró el turno solicitado.</h2>";
         }
     } catch (error) {
         console.error(error);
-        alert("Error de conexión.");
+        alert("Error de conexión al cargar el turno.");
     }
 
-    // Función para llenar los huecos del HTML
+    // 3. Función para llenar los huecos
     async function renderizarDetalle(turno) {
         setText("codigo-turno", "TUR-" + turno.id);
 
@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const estadoEl = document.getElementById("estado-turno");
         if(estadoEl) {
             estadoEl.textContent = turno.estado;
-            estadoEl.style.color = (turno.estado === "Cancelado") ? "red" : "green";
+            estadoEl.style.color = (turno.estado === "Cancelado") ? "#d9534f" : "#5cb85c";
         }
 
         // Buscar nombres reales
@@ -65,8 +65,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         } catch (error) {
             console.error("Error buscando nombres:", error);
         }
-
-        // Ocultar botón cancelar si ya está cancelado
+        
+        // Si está cancelado, escondemos el botón de cancelar
         if (turno.estado === "Cancelado") {
             const btn = document.querySelector(".btn.cancelar");
             if(btn) btn.style.display = "none";
@@ -78,27 +78,24 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (el) el.textContent = texto;
     }
 
-    // Botón Cancelar
+    // 4. Botón Cancelar
     const btnCancelar = document.querySelector(".btn.cancelar");
     if (btnCancelar) {
         btnCancelar.addEventListener("click", async (e) => {
             e.preventDefault();
             if (confirm("¿Estás seguro de que querés cancelar este turno?")) {
-                const res = await apiDelete(`/turnos/${turnoId}`);
-                if (res.status === 200) {
-                    alert("Turno cancelado.");
-                    window.location.reload();
-                } else {
-                    alert("Error al cancelar.");
+                try {
+                    const res = await apiDelete(`/turnos/${turnoId}`);
+                    if (res.status === 200) {
+                        alert("Turno cancelado correctamente.");
+                        window.location.reload(); // Recargar para ver el estado nuevo
+                    } else {
+                        alert("Error al cancelar: " + (res.data.error || "Desconocido"));
+                    }
+                } catch (error) {
+                    console.error(error);
                 }
             }
-        });
-    }
-    
-    // Botón Volver
-    const btnVolver = document.querySelector(".btn.volver");
-    if(btnVolver) {
-        btnVolver.addEventListener("click", () => {
         });
     }
 });
