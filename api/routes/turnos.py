@@ -33,23 +33,25 @@ def create_turno():
         # Captura errores de servidor o de base de datos
         return jsonify({"erroru": str(err)})
 
-# GET Todos
+# GET Todos (Dashboard Admin)
 @turnos_bp.route('/turnos', methods=['GET'])
 @token_required
 def get_turnos():
     try:
-        
-        lista_turnos = Turno.get_all() 
+        # Llamamos al método del modelo que acabamos de arreglar
+        negocio_id = request.negocio_id
+        lista_turnos = Turno.get_all(negocio_id)
+ 
         if not lista_turnos:
-            # Exito, pero sin turnos
-            return jsonify({"message": "No existen turnos asignados"}), 200 
-        
-        # Exitos y devuelve turnos
+
+             # Devolvemos lista vacía 200 OK (es mejor que un mensaje de texto para el frontend)
+            return jsonify([]), 200
+
+
         return jsonify(lista_turnos), 200
         
     except Exception as err:
-       
-        return jsonify({"error": "Error interno al obtener los turnos."}), 500
+        return jsonify({"error": str(err)}), 500
     
 # GET por ID (Para el comprobante)
 @turnos_bp.route('/turnos/<int:id>', methods=['GET'])

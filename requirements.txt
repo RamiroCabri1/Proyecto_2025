@@ -4,3 +4,4 @@ PyJWT
 flask-cors
 python-dotenv
 bcrypt
+pymysql

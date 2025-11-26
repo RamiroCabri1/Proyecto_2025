@@ -1,86 +1,72 @@
 import { apiGet, apiDelete } from "../core/api.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-    console.log("dashboard-clientes.js cargado y conectado al Backend.");
+    const tablaBody = document.querySelector("tbody"); 
 
-    const tablaBody = document.getElementById("clientes-body");
-    
-    // Función para llenar la tabla con datos
-    function renderTabla(clientes) {
+    async function cargarTurnos() {
+        try {
+            // Pedimos los TURNOS (no los clientes)
+            const res = await apiGet("/turnos");
+
+            if (res.status === 200) {
+                renderTabla(res.data);
+            } else {
+                console.error("Error:", res);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    function renderTabla(turnos) {
         tablaBody.innerHTML = "";
+        
+        // Fecha de hoy para comparar
+        const ahora = new Date();
 
-        clientes.forEach(cliente => {
+        turnos.forEach(turno => {
+            // --- TU LÓGICA DE ESTADOS ---
+            const fechaTurno = new Date(turno.fecha_hora); // Convierte string a fecha
+            let estadoTexto = "Pendiente";
+            let colorEstado = "orange";
+
+            // Si la fecha del turno es menor a la actual, ya pasó.
+            if (fechaTurno < ahora) {
+                estadoTexto = "Realizado";
+                colorEstado = "green";
+            }
+
+            // Formateo de fecha para que se vea linda (dd/mm hh:mm)
+            const fechaLinda = fechaTurno.toLocaleString();
+
             const fila = document.createElement("tr");
-
-            //  devuelve: nombre, apellido, email, dni, telefono.
-            // La tabla pide Servicio y Horario, pero eso está en otra tabla (Turnos).
-            // Por ahora mostramos los datos del cliente y dejamos guiones en lo demás.
-            
             fila.innerHTML = `
-                <td>${cliente.nombre} ${cliente.apellido || ''}</td>
-                <td>${cliente.email || 'Sin email'}</td>
-                <td>${cliente.telefono}</td> 
-                <td>-</td> 
+                <td>${turno.cliente_nombre}</td>
+                <td>${turno.cliente_telefono}</td>
+                <td>${turno.profesional_nombre}</td>
+                <td>${fechaLinda}</td>
+                <td style="color: ${colorEstado}; font-weight: bold;">${estadoTexto}</td>
                 <td>
-                    <button class="btn-cancelar" data-id="${cliente.id}">
-                        Eliminar
-                    </button>
+                    <button class="btn-borrar" data-id="${turno.id}" style="color: red; cursor: pointer;">Eliminar</button>
                 </td>
             `;
-
             tablaBody.appendChild(fila);
         });
 
-        activarBotonesCancelar();
+        activarBotonesBorrar();
     }
 
-    // Acción del botón eliminar
-    function activarBotonesCancelar(){
-        const botones = document.querySelectorAll(".btn-cancelar");
-
-        botones.forEach(btn => {
+    function activarBotonesBorrar() {
+        document.querySelectorAll(".btn-borrar").forEach(btn => {
             btn.addEventListener("click", async (e) => {
                 const id = e.target.dataset.id;
-                
-                if(confirm(`¿Seguro querés eliminar al cliente ID ${id}?`)) {
-                    try {
-                        // Llamada real al backend
-                        const res = await apiDelete(`/clientes/${id}`);
-                        
-                        if (res.status === 200) {
-                            alert("Cliente eliminado correctamente");
-                            cargarClientes(); // Recargamos la tabla para ver el cambio
-                        } else {
-                            alert("Error al eliminar: " + (res.data.error || "Desconocido"));
-                        }
-                    } catch (error) {
-                        console.error("Error:", error);
-                    }
+                if (confirm("¿Eliminar este turno?")) {
+                    await apiDelete(`/turnos/${id}`);
+                    cargarTurnos();
                 }
             });
-        });  
+        });
     }
 
-    // Carga inicial
-    async function cargarClientes(){
-        console.log("Pidiendo clientes al Backend...");
-        
-        try {
-            // Usamos la función del core que ya maneja el token
-            const res = await apiGet("/clientes");
-
-            if (res.status === 200) {
-                console.log("Clientes recibidos:", res.data);
-                renderTabla(res.data);
-            } else {
-                // Si el token venció (401), api.js o el usuario deberían manejarlo
-                console.error("Error cargando clientes:", res);
-                tablaBody.innerHTML = `<tr><td colspan="5">Error al cargar datos: ${res.status}</td></tr>`;
-            }
-        } catch (error) {
-            console.error("Error grave:", error);
-        }
-    }
-    cargarClientes();
-
+    cargarTurnos();
 });

@@ -111,28 +111,55 @@ class Turno:
                 cursor.close()
 
     @classmethod
-    def get_all(cls) -> List[dict]:
+    def get_all(cls, negocio_id: int = None) -> List[dict]:
+        """
+        Trae todos los turnos con JOINs (Nombres reales).
+        """
         cursor = None
         try:
-            cursor = mysql.connection.cursor() 
-            sql = "SELECT id, fecha_hora, estado, cliente_id, profesional_id, servicio_id, negocio_id FROM Turnos"
-            cursor.execute(sql)
+            cursor = mysql.connection.cursor()
+            
+            sql = """
+                SELECT 
+                    t.id, t.fecha_hora, t.estado,
+                    c.nombre AS cliente_nombre, c.apellido AS cliente_apellido, c.telefono AS cliente_telefono,
+                    p.nombre AS profesional_nombre,
+                    s.nombre AS servicio_nombre
+                FROM Turnos t
+                JOIN Clientes c ON t.cliente_id = c.id
+                JOIN Profesionales p ON t.profesional_id = p.id
+                JOIN Servicios s ON t.servicio_id = s.id
+            """
+            
+            if negocio_id:
+                sql += " WHERE t.negocio_id = %s"
+                cursor.execute(sql, (negocio_id,))
+            else:
+                cursor.execute(sql)
+                
             filas = cursor.fetchall()
             
-            lista_turnos = []
+            lista_completa = []
             for fila in filas:
-                turno = cls.from_row(fila) 
-                if turno:
-                    lista_turnos.append(turno)
+                turno_full = {
+                    "id": fila[0],
+                    "fecha_hora": str(fila[1]),
+                    "estado": fila[2],
+                    "cliente_nombre": f"{fila[3]} {fila[4] or ''}".strip(),
+                    "cliente_telefono": fila[5],
+                    "profesional_nombre": fila[6],
+                    "servicio_nombre": fila[7]
+                }
+                lista_completa.append(turno_full)
             
-            return [turno.to_json() for turno in lista_turnos]
+            return lista_completa
 
         except Exception as err:
             raise err 
         finally:
-            if cursor:
-                cursor.close()
-                
+            if cursor: cursor.close()
+
+            
     @classmethod
     def delete(cls, turno_id: int) -> int:
         cursor = None

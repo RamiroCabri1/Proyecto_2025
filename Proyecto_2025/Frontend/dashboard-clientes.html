@@ -43,34 +43,22 @@
         <main class="main-content">
             <input type="hidden" id="negocio_id" />
 
-            <h1>Turnos clientes</h1>
+            <h1>Clientes registrados</h1>
 
             <div class="table-container">
-                <table id = "tabla-clientes">
+                <table id="tabla-clientes">
                     <thead>
                         <tr>
                             <th>Nombre</th>
-                            <th>Email</th>
                             <th>Telefono</th>
+                            <th>Profesional</th>
                             <th>Turno</th>
+                            <th>Estado</th>
                             <th>Acción</th>
                         </tr>
                     </thead>
                     <tbody id="clientes-body">
-                        <tr>
-                            <td>Ana María</td>
-                            <td>ana@mail.com</td>
-                            <td>Masaje</td>
-                            <td>10:30</td>
-                            <td><button class="btn-cancelar" data-id="1">Cancelar</button></td>
-                        </tr>
-                        <tr>
-                            <td>Juan Pérez</td>
-                            <td>juan@mail.com</td>
-                            <td>Lifting</td>
-                            <td>11:00</td>
-                            <td><button class="btn-cancelar" data-id="1">Cancelar</button></td>
-                        </tr>
+                        <!-- Aca van filas dinamicas en js.  Estado se renderiza cn un <span class="estado-badge"> -->
                     </tbody>
                 </table>
             </div>
