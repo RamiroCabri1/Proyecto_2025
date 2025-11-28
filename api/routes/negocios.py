@@ -1,7 +1,7 @@
 from api.utils import token_required
 from flask import Blueprint, jsonify, request
 from api.models.negocio import Negocio 
-from api.db.db import mysql # Asegurate de que esto esté importado
+from api.db.db import mysql
 
 negocios_bp = Blueprint('negocios', __name__)
 

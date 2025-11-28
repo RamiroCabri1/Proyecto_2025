@@ -10,7 +10,8 @@ class Negocio:
         self._id = id
         self._nombre = nombre
         self._direccion = direccion
-        self._telefono = telefono # Telefono str quizas no sea la mejor opcion. Para no complicar y siendo que es facil modificar, se deja asi.
+        self._telefono = telefono # Telefono str quizas no sea la mejor opcion.
+        #Para no complicar y siendo que es facil modificar, se deja asi.
 
     @classmethod
     def from_row(cls, row: Optional[Tuple]) -> Union['Negocio', None]:
@@ -38,7 +39,7 @@ class Negocio:
             "telefono": self._telefono
         }
 
-    # --- LÓGICA DE CREACIÓN ---
+    # Creacion
 
     @classmethod
     def crear_desde_datos(cls, datos: Dict) -> 'Negocio':
@@ -76,7 +77,7 @@ class Negocio:
             if cursor:
                 cursor.close()
 
-    # --- LÓGICA DE LECTURA ---
+    # lectura
 
     @classmethod
     def obtener_todos(cls) -> List['Negocio']:
@@ -122,7 +123,7 @@ class Negocio:
             if cursor:
                 cursor.close()
 
-    # --- LÓGICA DE ACTUALIZACIÓN ---
+    # actualizar
 
     @classmethod
     def actualizar_desde_datos(cls, id: int, datos: Dict) -> Optional['Negocio']:
@@ -161,7 +162,7 @@ class Negocio:
             if cursor:
                 cursor.close()
 
-    # --- LÓGICA DE ELIMINACIÓN ---
+    # Delete
 
     @classmethod
     def eliminar(cls, id: int) -> int:

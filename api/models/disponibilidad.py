@@ -1,4 +1,4 @@
-# api/models/disponibilidad.py
+
 from api.db.db import mysql
 from typing import Dict, List, Optional
 
@@ -11,7 +11,7 @@ class Disponibilidad:
         self._hora_fin = row[4]
     
     def to_json(self) -> Dict:
-        # Función auxiliar para limpiar la hora (sacar segundos)
+        # funcion para limpiar la hora, quitamos segundos
         def limpiar_hora(tiempo):
             # Convertimos a string (por si viene como timedelta o time)
             s = str(tiempo)
